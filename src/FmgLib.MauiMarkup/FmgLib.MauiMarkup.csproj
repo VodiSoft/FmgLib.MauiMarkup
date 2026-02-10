@@ -51,7 +51,7 @@
 		<None Include="..\FmgLib.MauiMarkup.Generator\bin\$(Configuration)\netstandard2.0\FmgLib.MauiMarkup.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
-	<Target Name="BuildMauiMarkupGenerator" BeforeTargets="Pack">
+	<Target Name="BuildMauiMarkupGenerator" BeforeTargets="Pack" Condition="'$(NoBuild)' != 'true'">
 		<MSBuild Projects="..\FmgLib.MauiMarkup.Generator\FmgLib.MauiMarkup.Generator.csproj"
 				 Targets="Build"
 				 Properties="Configuration=$(Configuration)" />
