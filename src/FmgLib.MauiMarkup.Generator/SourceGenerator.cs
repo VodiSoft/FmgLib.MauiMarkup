@@ -6,6 +6,7 @@ using System.Threading;
 using FmgLib.MauiMarkup.Generator.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 #pragma warning disable RS2008, RS1032
 
@@ -18,6 +19,7 @@ namespace FmgLib.MauiMarkup;
 [Generator(LanguageNames.CSharp)]
 public sealed class SourceGenerator : IIncrementalGenerator
 {
+    private const string AutoGeneratePropertyName = "build_property.MauiMarkupSourceGenerator";
     private const string MauiMarkupAttributeName = "MauiMarkupAttribute";
     private const string MauiMarkupShortName = "MauiMarkup";
     private const string MauiMarkupAttachedPropAttributeName = "MauiMarkupAttachedPropAttribute";
@@ -44,10 +46,14 @@ public sealed class SourceGenerator : IIncrementalGenerator
             .Select(static (symbol, _) => symbol!);
 
         var compilationAndTypes = context.CompilationProvider.Combine(candidates.Collect());
+        var autoGenerationEnabled = context.AnalyzerConfigOptionsProvider
+            .Select(static (optionsProvider, _) => IsAutoGenerationEnabled(optionsProvider));
 
-        context.RegisterSourceOutput(compilationAndTypes, static (productionContext, source) =>
+        var generationInput = compilationAndTypes.Combine(autoGenerationEnabled);
+
+        context.RegisterSourceOutput(generationInput, static (productionContext, source) =>
         {
-            ExecuteGeneration(source.Left, source.Right, productionContext);
+            ExecuteGeneration(source.Left.Left, source.Left.Right, source.Right, productionContext);
         });
     }
 
@@ -78,23 +84,30 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return false;
     }
 
-    private static void ExecuteGeneration(Compilation compilation, ImmutableArray<INamedTypeSymbol> candidateTypes, SourceProductionContext context)
+    private static void ExecuteGeneration(Compilation compilation, ImmutableArray<INamedTypeSymbol> candidateTypes, bool autoGenerateForThirdPartyControls, SourceProductionContext context)
     {
-        if (candidateTypes.IsDefaultOrEmpty)
+        if (candidateTypes.IsDefaultOrEmpty && !autoGenerateForThirdPartyControls)
         {
             return;
         }
+
+        var generatedTargets = new HashSet<INamedTypeSymbol>(TypeSymbolComparer);
 
         foreach (var generatorTypeSymbol in candidateTypes.Distinct(TypeSymbolComparer))
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
-            GenerateForMauiMarkupAttributes(compilation, generatorTypeSymbol, context);
+            GenerateForMauiMarkupAttributes(compilation, generatorTypeSymbol, generatedTargets, context);
             GenerateForAttachedAttributes(compilation, generatorTypeSymbol, context);
+        }
+
+        if (autoGenerateForThirdPartyControls)
+        {
+            GenerateForThirdPartyControls(compilation, generatedTargets, context);
         }
     }
 
-    private static void GenerateForMauiMarkupAttributes(Compilation compilation, INamedTypeSymbol generatorTypeSymbol, SourceProductionContext context)
+    private static void GenerateForMauiMarkupAttributes(Compilation compilation, INamedTypeSymbol generatorTypeSymbol, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
     {
         var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
 
@@ -103,6 +116,60 @@ public sealed class SourceGenerator : IIncrementalGenerator
             foreach (var targetType in ExtractTypesFromAttribute(attribute).Distinct(TypeSymbolComparer))
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
+                if (!generatedTargets.Add(targetType))
+                {
+                    continue;
+                }
+
+                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
+                if (!generated)
+                {
+                    continue;
+                }
+
+                var uniqueName = AllocateHintName(suffixes, hintName);
+                context.AddSource($"{uniqueName}.g.cs", sourceText);
+            }
+        }
+    }
+
+    private static void GenerateForThirdPartyControls(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
+    {
+        var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
+        if (bindableObjectType is null)
+        {
+            return;
+        }
+
+        var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var reference in compilation.References)
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+
+            if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol)
+            {
+                continue;
+            }
+
+            if (IsExcludedAssembly(assemblySymbol))
+            {
+                continue;
+            }
+
+            foreach (var targetType in EnumerateAllTypes(assemblySymbol.GlobalNamespace))
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+
+                if (!IsEligibleAutoGenerationType(targetType, bindableObjectType))
+                {
+                    continue;
+                }
+
+                if (!generatedTargets.Add(targetType))
+                {
+                    continue;
+                }
 
                 var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
                 if (!generated)
@@ -221,6 +288,117 @@ public sealed class SourceGenerator : IIncrementalGenerator
         };
 
         return identifier is MauiMarkupAttributeName or MauiMarkupShortName or MauiMarkupAttachedPropAttributeName or MauiMarkupAttachedPropShortName;
+    }
+
+    private static bool IsAutoGenerationEnabled(AnalyzerConfigOptionsProvider optionsProvider)
+    {
+        if (!TryGetAutoGenerationPropertyValue(optionsProvider.GlobalOptions, out var rawValue))
+        {
+            return false;
+        }
+
+        return IsTrue(rawValue);
+    }
+
+    private static bool TryGetAutoGenerationPropertyValue(AnalyzerConfigOptions options, out string? rawValue)
+    {
+        if (options.TryGetValue(AutoGeneratePropertyName, out rawValue))
+        {
+            return true;
+        }
+
+        if (options.TryGetValue("build_property.mauimarkupsourcegenerator", out rawValue))
+        {
+            return true;
+        }
+
+        if (options.TryGetValue("MauiMarkupSourceGenerator", out rawValue))
+        {
+            return true;
+        }
+
+        if (options.TryGetValue("mauimarkupsourcegenerator", out rawValue))
+        {
+            return true;
+        }
+
+        rawValue = null;
+        return false;
+    }
+
+    private static bool IsTrue(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        return value!.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals("1", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals("on", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals("enable", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals("enabled", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsExcludedAssembly(IAssemblySymbol assemblySymbol)
+    {
+        var name = assemblySymbol.Name;
+
+        return name.StartsWith("Microsoft.Maui", StringComparison.Ordinal) ||
+               name.StartsWith("FmgLib.MauiMarkup", StringComparison.Ordinal) ||
+               name.StartsWith("System", StringComparison.Ordinal) ||
+               name.Equals("mscorlib", StringComparison.Ordinal) ||
+               name.Equals("netstandard", StringComparison.Ordinal);
+    }
+
+    private static bool IsEligibleAutoGenerationType(INamedTypeSymbol typeSymbol, INamedTypeSymbol bindableObjectType)
+    {
+        if (typeSymbol.TypeKind != TypeKind.Class ||
+            typeSymbol.IsGenericType ||
+            typeSymbol.DeclaredAccessibility != Accessibility.Public)
+        {
+            return false;
+        }
+
+        if (SymbolEqualityComparer.Default.Equals(typeSymbol, bindableObjectType))
+        {
+            return false;
+        }
+
+        return Helpers.IsBindableObject(typeSymbol);
+    }
+
+    private static IEnumerable<INamedTypeSymbol> EnumerateAllTypes(INamespaceSymbol namespaceSymbol)
+    {
+        foreach (var namespaceMember in namespaceSymbol.GetNamespaceMembers())
+        {
+            foreach (var type in EnumerateAllTypes(namespaceMember))
+            {
+                yield return type;
+            }
+        }
+
+        foreach (var typeMember in namespaceSymbol.GetTypeMembers())
+        {
+            foreach (var type in EnumerateNestedTypes(typeMember))
+            {
+                yield return type;
+            }
+        }
+    }
+
+    private static IEnumerable<INamedTypeSymbol> EnumerateNestedTypes(INamedTypeSymbol typeSymbol)
+    {
+        yield return typeSymbol;
+
+        foreach (var nestedType in typeSymbol.GetTypeMembers())
+        {
+            foreach (var type in EnumerateNestedTypes(nestedType))
+            {
+                yield return type;
+            }
+        }
     }
 
     private static string AllocateHintName(IDictionary<string, int> suffixes, string baseName)

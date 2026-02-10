@@ -37,6 +37,10 @@ dotnet new install FmgLib.MauiMarkup.Template
 dotnet new fmglib-mauimarkup-app -o my-new-project
 ```
 
+Optional parameters:
+- `--netMajor 10|9` (default 10) to pick the .NET/MAUI version and matching package versions.
+- `--includeContent true|false` (default false) to choose between a minimal home page or a richer sample experience.
+
 <br>
 
 ### Existing Projects
@@ -1400,6 +1404,19 @@ FmgLib.MauiMarkup library can also generate extension methods for controls from 
 Simply specify the control for which you want to create extension methods as `[MauiMarkup(typeof(YourControl))]`.
 
 The constructor method of the `MauiMarkup()` attribute automatically generates extension methods for BindableProperties and Events found within the type provided as an argument. **You can provide a minimum of 1 type inside the constructor method, and there is no maximum limit.** **Multiple MauiMarkup attributes can be added to a single class.**
+
+If you want to enable automatic generation for third-party MAUI controls without adding `MauiMarkupAttribute`, set the following property in your app `.csproj`:
+
+```xml
+<PropertyGroup>
+  <MauiMarkupSourceGenerator>true</MauiMarkupSourceGenerator>
+</PropertyGroup>
+```
+
+`CompilerVisibleProperty` is injected automatically by the package via `buildTransitive` props.
+
+When this property is enabled, the source generator scans referenced third-party assemblies and creates fluent extension methods for eligible public `BindableObject` controls automatically.
+
 
 **NOTE: Suppose that if a property inherited from base classes has been redefined with the `new` keyword in the class where you want to create a Fluent Method, the name of the new Fluent Method will be `PropertyName + New`.**
 
