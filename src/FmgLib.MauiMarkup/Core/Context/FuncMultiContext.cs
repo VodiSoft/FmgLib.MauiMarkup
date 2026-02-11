@@ -14,24 +14,47 @@ public class FuncMultiContext<TDest, TParam> : IMultiValueConverter
     readonly Func<TDest?, TParam?, CultureInfo, object[]>? convertBackWithParamAndCulture;
 
 
+    /// <summary>
+    /// Initializes a new instance of the <c>FuncMultiContext</c> class.
+    /// </summary>
+    /// <param name="convertWithParamAndCulture">The value used for <paramref name="convertWithParamAndCulture"/>.</param>
+    /// <param name="convertBackWithParamAndCulture">The value used for <paramref name="convertBackWithParamAndCulture"/>.</param>
     public FuncMultiContext(Func<object[], TParam?, CultureInfo, TDest>? convertWithParamAndCulture = null, Func<TDest?, TParam?, CultureInfo, object[]>? convertBackWithParamAndCulture = null)
     {
         this.convertWithParamAndCulture = convertWithParamAndCulture;
         this.convertBackWithParamAndCulture = convertBackWithParamAndCulture;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <c>FuncMultiContext</c> class.
+    /// </summary>
+    /// <param name="convertWithParam">The value used for <paramref name="convertWithParam"/>.</param>
+    /// <param name="convertBackWithParam">The value used for <paramref name="convertBackWithParam"/>.</param>
     public FuncMultiContext(Func<object[], TParam?, TDest>? convertWithParam = null, Func<TDest?, TParam?, object?[]>? convertBackWithParam = null)
     {
         this.convertWithParam = convertWithParam;
         this.convertBackWithParam = convertBackWithParam;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <c>FuncMultiContext</c> class.
+    /// </summary>
+    /// <param name="convert">The value used for <paramref name="convert"/>.</param>
+    /// <param name="convertBack">The value used for <paramref name="convertBack"/>.</param>
     public FuncMultiContext(Func<object[], TDest>? convert = null, Func<TDest?, object?[]>? convertBack = null)
     {
         this.convert = convert;
         this.convertBack = convertBack;
     }
 
+    /// <summary>
+    /// Executes the <c>Convert</c> operation.
+    /// </summary>
+    /// <param name="values">The value used for <paramref name="values"/>.</param>
+    /// <param name="targetType">The value used for <paramref name="targetType"/>.</param>
+    /// <param name="parameter">The value used for <paramref name="parameter"/>.</param>
+    /// <param name="culture">The value used for <paramref name="culture"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     public object? Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
     {
         if (convert is not null)
@@ -57,6 +80,14 @@ public class FuncMultiContext<TDest, TParam> : IMultiValueConverter
         return BindableProperty.UnsetValue;
     }
 
+    /// <summary>
+    /// Executes the <c>ConvertBack</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <param name="targetTypes">The value used for <paramref name="targetTypes"/>.</param>
+    /// <param name="parameter">The value used for <paramref name="parameter"/>.</param>
+    /// <param name="culture">The value used for <paramref name="culture"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     public object?[]? ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture)
     {
         if (convertBack != null)

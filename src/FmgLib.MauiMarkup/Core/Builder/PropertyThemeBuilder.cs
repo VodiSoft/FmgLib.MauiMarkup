@@ -16,11 +16,19 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
 
     public PropertyContext<T> Context { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <c>PropertyThemeBuilder</c> class.
+    /// </summary>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     public PropertyThemeBuilder(PropertyContext<T> context)
     {
         Context = context;
     }
 
+    /// <summary>
+    /// Builds the configuration for the <c>Build</c> operation.
+    /// </summary>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     public bool Build()
     {
         if (buildValue)
@@ -42,6 +50,11 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
         return isSet;
     }
 
+    /// <summary>
+    /// Executes the <c>Default</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertyThemeBuilder<T> Default(T value)
     {
         if (!defaultIsSet)
@@ -53,6 +66,11 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>Default</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertyThemeBuilder<T> Default(Func<PropertyContext<T>, IPropertyBuilder<T>> configure)
     {
         if (!defaultIsSet)
@@ -64,6 +82,11 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnLight</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertyThemeBuilder<T> OnLight(T value)
     {
         if (!isSet)
@@ -80,6 +103,11 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnLight</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertyThemeBuilder<T> OnLight(Func<PropertyContext<T>, IPropertyBuilder<T>> configure)
     {
         if (!isSet)
@@ -94,6 +122,11 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnDark</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertyThemeBuilder<T> OnDark(T value)
     {
         if (!isSet)
@@ -110,6 +143,11 @@ public sealed class PropertyThemeBuilder<T> : IPropertyBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnDark</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertyThemeBuilder<T> OnDark(Func<PropertyContext<T>, IPropertyBuilder<T>> configure)
     {
         if (!isSet)

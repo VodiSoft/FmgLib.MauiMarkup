@@ -12,11 +12,19 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     bool defaultIsSet;
     bool buildValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <c>PropertySettersIdiomBuilder</c> class.
+    /// </summary>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     public PropertySettersIdiomBuilder(PropertySettersContext<T> context)
     {
         Context = context;
     }
 
+    /// <summary>
+    /// Builds the configuration for the <c>Build</c> operation.
+    /// </summary>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     public bool Build()
     {
         if (buildValue)
@@ -36,6 +44,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     }
 
 
+    /// <summary>
+    /// Executes the <c>Default</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> Default(T value)
     {
         if (!defaultIsSet)
@@ -46,6 +59,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>Default</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> Default(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!defaultIsSet)
@@ -57,6 +75,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnPhone</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnPhone(T value)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Phone)
@@ -68,6 +91,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnPhone</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnPhone(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Phone)
@@ -76,6 +104,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnTablet</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnTablet(T value)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Tablet)
@@ -87,6 +120,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnTablet</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnTablet(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Tablet)
@@ -95,6 +133,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnDesktop</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnDesktop(T value)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Desktop)
@@ -106,6 +149,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnDesktop</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnDesktop(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Desktop)
@@ -114,6 +162,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnTV</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnTV(T value)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.TV)
@@ -125,6 +178,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnTV</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnTV(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.TV)
@@ -133,6 +191,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnWatch</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnWatch(T value)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Watch)
@@ -144,6 +207,11 @@ public sealed class PropertySettersIdiomBuilder<T> : IPropertySettersBuilder<T>
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnWatch</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersIdiomBuilder<T> OnWatch(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Idiom == DeviceIdiom.Watch)
