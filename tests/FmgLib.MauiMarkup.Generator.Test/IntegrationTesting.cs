@@ -134,6 +134,41 @@ public class FileName
         runResult.GeneratedTrees.Any(tree => tree.FilePath.Contains("SfAvatarView", StringComparison.OrdinalIgnoreCase)).Should().BeTrue();
     }
 
+    [Test]
+    public void TestSourceGenerator_AvatarView_DoesNotGenerateInvalidITextAlignmentPropertyAccess()
+    {
+        var rootPath = AppDomain.CurrentDomain.BaseDirectory;
+        var source = @"
+using CommunityToolkit.Maui.Views;
+using FmgLib.MauiMarkup;
+
+namespace ConsoleApp1;
+
+[MauiMarkup(typeof(AvatarView))]
+public class FileName
+{ }";
+
+        var additionalReferences = CreateSharedReferences(rootPath)
+            .Concat(new[]
+            {
+                @$"{rootPath}\DLLs\CommunityToolkit.Maui.Core.dll",
+                @$"{rootPath}\DLLs\CommunityToolkit.Maui.dll"
+            })
+            .ToArray();
+
+        var (compilation, _) = CreateCompilation(source, additionalReferences);
+
+        var generator = new SourceGenerator();
+        var driver = CreateDriver(generator);
+        driver = (CSharpGeneratorDriver)driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _);
+
+        var hasInvalidAlignmentPropertyError = outputCompilation
+            .GetDiagnostics()
+            .Any(d => d.Id == "CS0117" && d.GetMessage().Contains("TextAlignmentProperty"));
+
+        hasInvalidAlignmentPropertyError.Should().BeFalse();
+    }
+
     private static string[] CreateSharedReferences(string rootPath)
     {
         return

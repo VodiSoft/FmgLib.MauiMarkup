@@ -145,7 +145,7 @@ public static partial class {className}
                 GenerateEventMethod(@event);
             }
 
-            if (Helpers.IsBaseImplementationOfInterface(mainSymbol, "ITextAlignment"))
+            if (CanGenerateITextAlignmentExtensions())
                 GenerateExtensionMethods_ITextAlignment(mainSymbol);
         }
         else
@@ -157,6 +157,17 @@ public static partial class {className}
     bool IsEligibleProperty(IPropertySymbol property)
     {
         return property.DeclaredAccessibility == Accessibility.Public && !HasObsoleteAttribute(property);
+    }
+
+    bool CanGenerateITextAlignmentExtensions()
+    {
+        if (!Helpers.IsBaseImplementationOfInterface(mainSymbol, "ITextAlignment"))
+        {
+            return false;
+        }
+
+        return bindablePropertyNames.Any(name => name.Equals("VerticalTextAlignment", StringComparison.Ordinal))
+            && bindablePropertyNames.Any(name => name.Equals("HorizontalTextAlignment", StringComparison.Ordinal));
     }
 
     bool IsEligibleField(IFieldSymbol field)
