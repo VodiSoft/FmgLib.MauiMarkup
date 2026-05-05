@@ -19,6 +19,12 @@ public class TranslatorResx : BaseTranslator, INotifyPropertyChanged
         }
     }
 
+    /// <summary>
+    /// Executes the <c>TranslateString</c> operation.
+    /// </summary>
+    /// <param name="key">The value used for <paramref name="key"/>.</param>
+    /// <param name="culture">The value used for <paramref name="culture"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     public string TranslateString(string key, CultureInfo culture)
     {
         return ResourceManager.GetString(key, culture);

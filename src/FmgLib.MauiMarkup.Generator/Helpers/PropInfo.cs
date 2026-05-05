@@ -23,6 +23,10 @@ public class PropInfo
     public string valueAssignmentString = null!;
     public string dataTemplateAssignmentString = null!;
 
+    /// <summary>
+    /// Builds the configuration for the <c>Build</c> operation.
+    /// </summary>
+    /// <param name="redefinedProperties">The value used for <paramref name="redefinedProperties"/>.</param>
     public void Build(List<string>? redefinedProperties = null)
     {
         propertyName = PropertySymbol.Name.Split(new[] { "." }, StringSplitOptions.None).Last();

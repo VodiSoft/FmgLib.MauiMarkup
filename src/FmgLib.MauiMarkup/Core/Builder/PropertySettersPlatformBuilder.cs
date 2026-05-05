@@ -12,11 +12,19 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     bool defaultIsSet;
     bool buildValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <c>PropertySettersPlatformBuilder</c> class.
+    /// </summary>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     public PropertySettersPlatformBuilder(PropertySettersContext<T> context)
     {
         Context = context;
     }
 
+    /// <summary>
+    /// Builds the configuration for the <c>Build</c> operation.
+    /// </summary>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     public bool Build()
     {
         if (buildValue)
@@ -36,6 +44,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     }
 
 
+    /// <summary>
+    /// Executes the <c>Default</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> Default(T value)
     {
         if (!defaultIsSet)
@@ -46,6 +59,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>Default</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> Default(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!defaultIsSet)
@@ -57,6 +75,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnMacCatalyst</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnMacCatalyst(T value)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.MacCatalyst)
@@ -68,6 +91,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnMacCatalyst</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnMacCatalyst(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.MacCatalyst)
@@ -76,6 +104,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     }
 
 
+    /// <summary>
+    /// Executes the <c>OniOS</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OniOS(T value)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.iOS)
@@ -87,6 +120,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OniOS</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OniOS(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.iOS)
@@ -95,6 +133,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnAndroid</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnAndroid(T value)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android)
@@ -106,6 +149,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnAndroid</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnAndroid(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Android)
@@ -114,6 +162,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnWinUI</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnWinUI(T value)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.WinUI)
@@ -125,6 +178,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnWinUI</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnWinUI(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.WinUI)
@@ -133,6 +191,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
     }
 
 
+    /// <summary>
+    /// Executes the <c>OnTizen</c> operation.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnTizen(T value)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Tizen)
@@ -144,6 +207,11 @@ public sealed class PropertySettersPlatformBuilder<T> : IPropertySettersBuilder<
         return this;
     }
 
+    /// <summary>
+    /// Executes the <c>OnTizen</c> operation.
+    /// </summary>
+    /// <param name="configure">The value used for <paramref name="configure"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersPlatformBuilder<T> OnTizen(Func<PropertySettersContext<T>, IPropertySettersBuilder<T>> configure)
     {
         if (!isSet && DeviceInfo.Platform == Microsoft.Maui.Devices.DevicePlatform.Tizen)

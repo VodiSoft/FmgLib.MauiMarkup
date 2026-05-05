@@ -34,6 +34,10 @@ public sealed class SourceGenerator : IIncrementalGenerator
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
+    /// <summary>
+    /// Executes the <c>Initialize</c> operation.
+    /// </summary>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         context.RegisterPostInitializationOutput(static output => AddAttributeDefinitions(output));
@@ -57,6 +61,12 @@ public sealed class SourceGenerator : IIncrementalGenerator
         });
     }
 
+    /// <summary>
+    /// Gets the value produced by the <c>GetCandidateType</c> operation.
+    /// </summary>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
+    /// <param name="cancellationToken">The value used for <paramref name="cancellationToken"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     private static INamedTypeSymbol? GetCandidateType(GeneratorSyntaxContext context, CancellationToken cancellationToken)
     {
         var classDeclaration = (ClassDeclarationSyntax)context.Node;
@@ -68,6 +78,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return context.SemanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken) as INamedTypeSymbol;
     }
 
+    /// <summary>
+    /// Executes the <c>ContainsMauiMarkupAttribute</c> operation.
+    /// </summary>
+    /// <param name="classDeclaration">The value used for <paramref name="classDeclaration"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool ContainsMauiMarkupAttribute(ClassDeclarationSyntax classDeclaration)
     {
         foreach (var attributeList in classDeclaration.AttributeLists)
@@ -84,6 +99,13 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return false;
     }
 
+    /// <summary>
+    /// Executes the <c>ExecuteGeneration</c> operation.
+    /// </summary>
+    /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
+    /// <param name="candidateTypes">The value used for <paramref name="candidateTypes"/>.</param>
+    /// <param name="autoGenerateForThirdPartyControls">The value used for <paramref name="autoGenerateForThirdPartyControls"/>.</param>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     private static void ExecuteGeneration(Compilation compilation, ImmutableArray<INamedTypeSymbol> candidateTypes, bool autoGenerateForThirdPartyControls, SourceProductionContext context)
     {
         if (candidateTypes.IsDefaultOrEmpty && !autoGenerateForThirdPartyControls)
@@ -107,6 +129,13 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
+    /// <summary>
+    /// Generates output for the <c>GenerateForMauiMarkupAttributes</c> operation.
+    /// </summary>
+    /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
+    /// <param name="generatorTypeSymbol">The value used for <paramref name="generatorTypeSymbol"/>.</param>
+    /// <param name="generatedTargets">The value used for <paramref name="generatedTargets"/>.</param>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     private static void GenerateForMauiMarkupAttributes(Compilation compilation, INamedTypeSymbol generatorTypeSymbol, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
     {
         var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -183,6 +212,68 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
+    /// <summary>
+    /// Generates output for the <c>GenerateForThirdPartyControls</c> operation.
+    /// </summary>
+    /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
+    /// <param name="generatedTargets">The value used for <paramref name="generatedTargets"/>.</param>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
+    private static void GenerateForThirdPartyControls(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
+    {
+        var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
+        if (bindableObjectType is null)
+        {
+            return;
+        }
+
+        var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var reference in compilation.References)
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+
+            if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol)
+            {
+                continue;
+            }
+
+            if (IsExcludedAssembly(assemblySymbol))
+            {
+                continue;
+            }
+
+            foreach (var targetType in EnumerateAllTypes(assemblySymbol.GlobalNamespace))
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+
+                if (!IsEligibleAutoGenerationType(targetType, bindableObjectType))
+                {
+                    continue;
+                }
+
+                if (!generatedTargets.Add(targetType))
+                {
+                    continue;
+                }
+
+                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
+                if (!generated)
+                {
+                    continue;
+                }
+
+                var uniqueName = AllocateHintName(suffixes, hintName);
+                context.AddSource($"{uniqueName}.g.cs", sourceText);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Generates output for the <c>GenerateForAttachedAttributes</c> operation.
+    /// </summary>
+    /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
+    /// <param name="generatorTypeSymbol">The value used for <paramref name="generatorTypeSymbol"/>.</param>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     private static void GenerateForAttachedAttributes(Compilation compilation, INamedTypeSymbol generatorTypeSymbol, SourceProductionContext context)
     {
         var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -207,6 +298,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
+    /// <summary>
+    /// Executes the <c>ExtractTypesFromAttribute</c> operation.
+    /// </summary>
+    /// <param name="attributeData">The value used for <paramref name="attributeData"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     private static IEnumerable<INamedTypeSymbol> ExtractTypesFromAttribute(AttributeData attributeData)
     {
         if (attributeData.ConstructorArguments.Length == 0)
@@ -236,6 +332,12 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return symbols;
     }
 
+    /// <summary>
+    /// Attempts to execute the <c>TryCreateAttachedModel</c> operation.
+    /// </summary>
+    /// <param name="attributeData">The value used for <paramref name="attributeData"/>.</param>
+    /// <param name="attachedModel">The value used for <paramref name="attachedModel"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool TryCreateAttachedModel(AttributeData attributeData, out AttachedModel attachedModel)
     {
         attachedModel = default!;
@@ -265,18 +367,33 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return true;
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsMauiMarkupAttribute</c> condition is satisfied.
+    /// </summary>
+    /// <param name="attributeData">The value used for <paramref name="attributeData"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsMauiMarkupAttribute(AttributeData attributeData)
     {
         var name = attributeData.AttributeClass?.Name;
         return name is MauiMarkupAttributeName or MauiMarkupShortName;
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsMauiMarkupAttachedPropAttribute</c> condition is satisfied.
+    /// </summary>
+    /// <param name="attributeData">The value used for <paramref name="attributeData"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsMauiMarkupAttachedPropAttribute(AttributeData attributeData)
     {
         var name = attributeData.AttributeClass?.Name;
         return name is MauiMarkupAttachedPropAttributeName or MauiMarkupAttachedPropShortName;
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsGeneratorAttribute</c> condition is satisfied.
+    /// </summary>
+    /// <param name="nameSyntax">The value used for <paramref name="nameSyntax"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsGeneratorAttribute(NameSyntax nameSyntax)
     {
         var identifier = nameSyntax switch
@@ -290,6 +407,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return identifier is MauiMarkupAttributeName or MauiMarkupShortName or MauiMarkupAttachedPropAttributeName or MauiMarkupAttachedPropShortName;
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsAutoGenerationEnabled</c> condition is satisfied.
+    /// </summary>
+    /// <param name="optionsProvider">The value used for <paramref name="optionsProvider"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsAutoGenerationEnabled(AnalyzerConfigOptionsProvider optionsProvider)
     {
         if (!TryGetAutoGenerationPropertyValue(optionsProvider.GlobalOptions, out var rawValue))
@@ -300,6 +422,12 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return IsTrue(rawValue);
     }
 
+    /// <summary>
+    /// Attempts to execute the <c>TryGetAutoGenerationPropertyValue</c> operation.
+    /// </summary>
+    /// <param name="options">The value used for <paramref name="options"/>.</param>
+    /// <param name="rawValue">The value used for <paramref name="rawValue"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool TryGetAutoGenerationPropertyValue(AnalyzerConfigOptions options, out string? rawValue)
     {
         if (options.TryGetValue(AutoGeneratePropertyName, out rawValue))
@@ -326,6 +454,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return false;
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsTrue</c> condition is satisfied.
+    /// </summary>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsTrue(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -341,6 +474,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
                value.Equals("enabled", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsExcludedAssembly</c> condition is satisfied.
+    /// </summary>
+    /// <param name="assemblySymbol">The value used for <paramref name="assemblySymbol"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsExcludedAssembly(IAssemblySymbol assemblySymbol)
     {
         var name = assemblySymbol.Name;
@@ -352,6 +490,12 @@ public sealed class SourceGenerator : IIncrementalGenerator
                name.Equals("netstandard", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Evaluates whether the <c>IsEligibleAutoGenerationType</c> condition is satisfied.
+    /// </summary>
+    /// <param name="typeSymbol">The value used for <paramref name="typeSymbol"/>.</param>
+    /// <param name="bindableObjectType">The value used for <paramref name="bindableObjectType"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     private static bool IsEligibleAutoGenerationType(INamedTypeSymbol typeSymbol, INamedTypeSymbol bindableObjectType)
     {
         if (typeSymbol.TypeKind != TypeKind.Class ||
@@ -369,6 +513,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return Helpers.IsBindableObject(typeSymbol);
     }
 
+    /// <summary>
+    /// Executes the <c>EnumerateAllTypes</c> operation.
+    /// </summary>
+    /// <param name="namespaceSymbol">The value used for <paramref name="namespaceSymbol"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     private static IEnumerable<INamedTypeSymbol> EnumerateAllTypes(INamespaceSymbol namespaceSymbol)
     {
         foreach (var namespaceMember in namespaceSymbol.GetNamespaceMembers())
@@ -388,6 +537,11 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
+    /// <summary>
+    /// Executes the <c>EnumerateNestedTypes</c> operation.
+    /// </summary>
+    /// <param name="typeSymbol">The value used for <paramref name="typeSymbol"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     private static IEnumerable<INamedTypeSymbol> EnumerateNestedTypes(INamedTypeSymbol typeSymbol)
     {
         yield return typeSymbol;
@@ -401,6 +555,12 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
+    /// <summary>
+    /// Executes the <c>AllocateHintName</c> operation.
+    /// </summary>
+    /// <param name="suffixes">The value used for <paramref name="suffixes"/>.</param>
+    /// <param name="baseName">The value used for <paramref name="baseName"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     private static string AllocateHintName(IDictionary<string, int> suffixes, string baseName)
     {
         if (!suffixes.TryGetValue(baseName, out var index))
@@ -414,6 +574,10 @@ public sealed class SourceGenerator : IIncrementalGenerator
         return $"{baseName}{index}";
     }
 
+    /// <summary>
+    /// Executes the <c>AddAttributeDefinitions</c> operation.
+    /// </summary>
+    /// <param name="context">The value used for <paramref name="context"/>.</param>
     private static void AddAttributeDefinitions(IncrementalGeneratorPostInitializationContext context)
     {
         context.AddSource("MauiMarkupAttribute.g.cs", @"//
@@ -427,6 +591,10 @@ namespace FmgLib.MauiMarkup;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 internal sealed class MauiMarkupAttribute : Attribute
 {
+    /// <summary>
+    /// Initializes a new instance of the MauiMarkupAttribute class.
+    /// </summary>
+    /// <param name=""nativeControlTypes"">The target control types.</param>
     public MauiMarkupAttribute(params Type[] nativeControlTypes) { }
 }
 
@@ -443,6 +611,13 @@ namespace FmgLib.MauiMarkup;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 internal sealed class MauiMarkupAttachedPropAttribute : Attribute
 {
+    /// <summary>
+    /// Initializes a new instance of the MauiMarkupAttachedPropAttribute class.
+    /// </summary>
+    /// <param name=""controlType"">The target control type.</param>
+    /// <param name=""propertyName"">The attached property name.</param>
+    /// <param name=""returnType"">The attached property value type.</param>
+    /// <param name=""declaringType"">The type that declares the attached property.</param>
     public MauiMarkupAttachedPropAttribute(Type controlType, string propertyName, Type returnType, Type declaringType) { }
 }
 
