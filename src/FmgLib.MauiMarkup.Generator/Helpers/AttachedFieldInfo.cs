@@ -23,6 +23,9 @@ public sealed class AttachedFieldInfo
     public string valueAssignmentString = null!;
     public string dataTemplateAssignmentString = null!;
 
+    /// <summary>
+    /// Builds the configuration for the <c>Build</c> operation.
+    /// </summary>
     public void Build()
     {
         FieldSymbol = MainSymbol.GetMembers(PropertyName).OfType<IFieldSymbol>().FirstOrDefault();

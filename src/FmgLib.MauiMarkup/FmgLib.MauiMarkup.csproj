@@ -12,7 +12,7 @@
 		<PackageId>FmgLib.MauiMarkup</PackageId>
 		<Summary>FmgLib.MauiMarkup with C# Markup classes and fluent helper methods</Summary>
 		<Title>FmgLib.MauiMarkup</Title>
-		<Version>10.0.0</Version>
+		<Version>10.0.1</Version>
 		<Authors>FmgYazılım</Authors>
 		<Company>Fmg Yazılım</Company>
 		<Copyright>©2025</Copyright>
@@ -29,7 +29,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.11" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -41,9 +41,19 @@
 		<None Include="LICENSE" Pack="true" PackagePath="" />
 		<None Include="nuget.png" Pack="true" PackagePath="" />
 		<None Include="README.md" Pack="true" PackagePath="" />
+		<None Include="buildTransitive/FmgLib.MauiMarkup.props" Pack="true" PackagePath="buildTransitive/FmgLib.MauiMarkup.props" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\FmgLib.MauiMarkup.Generator\bin\Release\netstandard2.0\FmgLib.MauiMarkup.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<ProjectReference Include="..\FmgLib.MauiMarkup.Generator\FmgLib.MauiMarkup.Generator.csproj"
+						  ReferenceOutputAssembly="false"
+						  PrivateAssets="all" />
+		<None Include="..\FmgLib.MauiMarkup.Generator\bin\$(Configuration)\netstandard2.0\FmgLib.MauiMarkup.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
+
+	<Target Name="BuildMauiMarkupGenerator" BeforeTargets="Pack">
+		<MSBuild Projects="..\FmgLib.MauiMarkup.Generator\FmgLib.MauiMarkup.Generator.csproj"
+				 Targets="Build"
+				 Properties="Configuration=$(Configuration)" />
+	</Target>
 </Project>

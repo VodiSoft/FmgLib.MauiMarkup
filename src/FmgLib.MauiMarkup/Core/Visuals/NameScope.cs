@@ -20,12 +20,26 @@ public class NameScope : INameScope
         _values[scopedElement] = name;
     }
 
+    /// <summary>
+    /// Executes the <c>NameOf</c> operation.
+    /// </summary>
+    /// <param name="scopedObject">The value used for <paramref name="scopedObject"/>.</param>
+    /// <returns>The result produced by the operation.</returns>
     internal string NameOf(object scopedObject)
         => _values.TryGetValue(scopedObject, out var name) ? name : null;
 
 
+    /// <summary>
+    /// Gets the value produced by the <c>GetNameScope</c> operation.
+    /// </summary>
+    /// <returns>The result produced by the operation.</returns>
     public static INameScope GetNameScope(BindableObject bindable) => (INameScope)bindable.GetValue(NameScopeProperty);
 
+    /// <summary>
+    /// Sets the value handled by the <c>SetNameScope</c> operation.
+    /// </summary>
+    /// <param name="bindable">The value used for <paramref name="bindable"/>.</param>
+    /// <param name="value">The value used for <paramref name="value"/>.</param>
     public static void SetNameScope(BindableObject bindable, INameScope value)
     {
         if (bindable.GetValue(NameScopeProperty) == null)
