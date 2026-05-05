@@ -162,6 +162,56 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
+    private static void GenerateForThirdPartyControls(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
+    {
+        var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
+        if (bindableObjectType is null)
+        {
+            return;
+        }
+
+        var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var reference in compilation.References)
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+
+            if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol)
+            {
+                continue;
+            }
+
+            if (IsExcludedAssembly(assemblySymbol))
+            {
+                continue;
+            }
+
+            foreach (var targetType in EnumerateAllTypes(assemblySymbol.GlobalNamespace))
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+
+                if (!IsEligibleAutoGenerationType(targetType, bindableObjectType))
+                {
+                    continue;
+                }
+
+                if (!generatedTargets.Add(targetType))
+                {
+                    continue;
+                }
+
+                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
+                if (!generated)
+                {
+                    continue;
+                }
+
+                var uniqueName = AllocateHintName(suffixes, hintName);
+                context.AddSource($"{uniqueName}.g.cs", sourceText);
+            }
+        }
+    }
+
     /// <summary>
     /// Generates output for the <c>GenerateForThirdPartyControls</c> operation.
     /// </summary>
