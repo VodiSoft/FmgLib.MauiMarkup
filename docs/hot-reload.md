@@ -191,6 +191,37 @@ Targeted-mode matching rules: an update rebuilds a registered target when the ru
 
 > Only types implementing `IFmgLibHotReload` (and calling `InitializeHotReload`, or deriving from `FmgLibContentPage`) rebuild themselves. If an edit to your `AppShell` or a plain `ContentView` doesn't appear, give that type the same treatment.
 
+## One-Keypress Dev Loop in VS Code (recommended)
+
+Projects created from the `fmglib-mauimarkup-app` template ship a ready `.vscode/tasks.json`. For existing projects, add:
+
+```jsonc
+// .vscode/tasks.json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🔥 Hot Reload: iOS Simulator",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [ "watch", "run", "-f", "net10.0-ios" ],
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "🔥 Hot Reload: Android",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [ "watch", "run", "-f", "net10.0-android" ],
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+}
+```
+
+Run the task (`Terminal → Run Task…`), edit `Build()`, save — the change is on the device in seconds, and the terminal shows both `dotnet watch 🔥 … applied` and the library's `update received … rebuilding N target(s)` confirmation. Use F5 debugging separately when you need breakpoints.
+
 ## Troubleshooting
 
 | Symptom | Cause / fix |
