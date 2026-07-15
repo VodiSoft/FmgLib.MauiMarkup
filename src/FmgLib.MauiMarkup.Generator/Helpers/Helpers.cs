@@ -14,6 +14,23 @@ public static class Helpers
     public static readonly HashSet<string> NotGenerateList = new(StringComparer.Ordinal) { "this[]", "Handler", "LogicalChildren" };
 
     /// <summary>
+    /// C# reserved keywords: identifiers generated from property names (e.g. parameter names)
+    /// must be escaped with <c>@</c> when they collide with one of these.
+    /// </summary>
+    private static readonly HashSet<string> CSharpKeywords = new(StringComparer.Ordinal)
+    {
+        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+        "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else",
+        "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for",
+        "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock",
+        "long", "namespace", "new", "null", "object", "operator", "out", "override", "params",
+        "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed",
+        "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+        "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using",
+        "virtual", "void", "volatile", "while"
+    };
+
+    /// <summary>
     /// Executes the <c>ToCamelCase</c> operation.
     /// </summary>
     /// <param name="text">The value used for <paramref name="text"/>.</param>
@@ -23,7 +40,8 @@ public static class Helpers
         if (string.IsNullOrWhiteSpace(text))
             return text;
 
-        return char.ToLowerInvariant(text[0]) + text[1..];
+        var result = char.ToLowerInvariant(text[0]) + text[1..];
+        return CSharpKeywords.Contains(result) ? "@" + result : result;
     }
 
     /// <summary>

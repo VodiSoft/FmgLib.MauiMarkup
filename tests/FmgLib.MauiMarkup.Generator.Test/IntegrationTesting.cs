@@ -68,32 +68,32 @@ public class FileName
         var additionalReferences = CreateSharedReferences(rootPath)
             .Concat(new[]
             {
-                @$"{rootPath}\DLLs\InputKit.Maui.dll",
-                @$"{rootPath}\DLLs\Plainer.Maui.dll",
-                @$"{rootPath}\DLLs\UraniumUI.dll",
-                @$"{rootPath}\DLLs\UraniumUI.Material.dll",
-                @$"{rootPath}\DLLs\DevExpress.Data.v23.2.dll",
-                @$"{rootPath}\DLLs\DevExpress.Maui.CollectionView.dll",
-                @$"{rootPath}\DLLs\DevExpress.Maui.Controls.dll",
-                @$"{rootPath}\DLLs\DevExpress.Maui.Core.dll",
-                @$"{rootPath}\DLLs\DevExpress.Maui.Editors.dll",
-                @$"{rootPath}\DLLs\LiveChartsCore.Behaviours.dll",
-                @$"{rootPath}\DLLs\LiveChartsCore.dll",
-                @$"{rootPath}\DLLs\LiveChartsCore.SkiaSharpView.dll",
-                @$"{rootPath}\DLLs\LiveChartsCore.SkiaSharpView.Maui.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.HarfBuzz.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.Views.Maui.Controls.Compatibility.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.Views.Maui.Controls.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.Views.Maui.Core.dll",
-                @$"{rootPath}\DLLs\Microsoft.Maui.Controls.Compatibility.dll",
-                @$"{rootPath}\DLLs\CommunityToolkit.Maui.Core.dll",
-                @$"{rootPath}\DLLs\CommunityToolkit.Maui.dll",
-                @$"{rootPath}\DLLs\PanCardView.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.Extended.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.Extended.UI.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.SceneGraph.dll",
-                @$"{rootPath}\DLLs\SkiaSharp.Skottie.dll"
+                $"{rootPath}/DLLs/InputKit.Maui.dll",
+                $"{rootPath}/DLLs/Plainer.Maui.dll",
+                $"{rootPath}/DLLs/UraniumUI.dll",
+                $"{rootPath}/DLLs/UraniumUI.Material.dll",
+                $"{rootPath}/DLLs/DevExpress.Data.v23.2.dll",
+                $"{rootPath}/DLLs/DevExpress.Maui.CollectionView.dll",
+                $"{rootPath}/DLLs/DevExpress.Maui.Controls.dll",
+                $"{rootPath}/DLLs/DevExpress.Maui.Core.dll",
+                $"{rootPath}/DLLs/DevExpress.Maui.Editors.dll",
+                $"{rootPath}/DLLs/LiveChartsCore.Behaviours.dll",
+                $"{rootPath}/DLLs/LiveChartsCore.dll",
+                $"{rootPath}/DLLs/LiveChartsCore.SkiaSharpView.dll",
+                $"{rootPath}/DLLs/LiveChartsCore.SkiaSharpView.Maui.dll",
+                $"{rootPath}/DLLs/SkiaSharp.dll",
+                $"{rootPath}/DLLs/SkiaSharp.HarfBuzz.dll",
+                $"{rootPath}/DLLs/SkiaSharp.Views.Maui.Controls.Compatibility.dll",
+                $"{rootPath}/DLLs/SkiaSharp.Views.Maui.Controls.dll",
+                $"{rootPath}/DLLs/SkiaSharp.Views.Maui.Core.dll",
+                $"{rootPath}/DLLs/Microsoft.Maui.Controls.Compatibility.dll",
+                $"{rootPath}/DLLs/CommunityToolkit.Maui.Core.dll",
+                $"{rootPath}/DLLs/CommunityToolkit.Maui.dll",
+                $"{rootPath}/DLLs/PanCardView.dll",
+                $"{rootPath}/DLLs/SkiaSharp.Extended.dll",
+                $"{rootPath}/DLLs/SkiaSharp.Extended.UI.dll",
+                $"{rootPath}/DLLs/SkiaSharp.SceneGraph.dll",
+                $"{rootPath}/DLLs/SkiaSharp.Skottie.dll"
             })
             .ToArray();
 
@@ -151,8 +151,8 @@ public class FileName
         var additionalReferences = CreateSharedReferences(rootPath)
             .Concat(new[]
             {
-                @$"{rootPath}\DLLs\CommunityToolkit.Maui.Core.dll",
-                @$"{rootPath}\DLLs\CommunityToolkit.Maui.dll"
+                $"{rootPath}/DLLs/CommunityToolkit.Maui.Core.dll",
+                $"{rootPath}/DLLs/CommunityToolkit.Maui.dll"
             })
             .ToArray();
 
@@ -173,29 +173,29 @@ public class FileName
     {
         return
         [
-            @$"{rootPath}\DLLs\FmgLib.MauiMarkup.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.Configuration.Abstractions.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.Configuration.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.DependencyInjection.Abstractions.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.DependencyInjection.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.Logging.Abstractions.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.Logging.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.Options.dll",
-            @$"{rootPath}\DLLs\Microsoft.Extensions.Primitives.dll",
-            @$"{rootPath}\DLLs\Microsoft.Maui.Controls.dll",
-            @$"{rootPath}\DLLs\Microsoft.Maui.Controls.Xaml.dll",
-            @$"{rootPath}\DLLs\Microsoft.Maui.dll",
-            @$"{rootPath}\DLLs\Microsoft.Maui.Essentials.dll",
-            @$"{rootPath}\DLLs\Microsoft.Maui.Graphics.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Licensing.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.Core.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.Data.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.DataGrid.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.DataSource.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.GridCommon.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.Inputs.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.ListView.dll",
-            @$"{rootPath}\DLLs\Syncfusion.Maui.PullToRefresh.dll"
+            $"{rootPath}/DLLs/FmgLib.MauiMarkup.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.Configuration.Abstractions.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.Configuration.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.DependencyInjection.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.Logging.Abstractions.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.Logging.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.Options.dll",
+            $"{rootPath}/DLLs/Microsoft.Extensions.Primitives.dll",
+            $"{rootPath}/DLLs/Microsoft.Maui.Controls.dll",
+            $"{rootPath}/DLLs/Microsoft.Maui.Controls.Xaml.dll",
+            $"{rootPath}/DLLs/Microsoft.Maui.dll",
+            $"{rootPath}/DLLs/Microsoft.Maui.Essentials.dll",
+            $"{rootPath}/DLLs/Microsoft.Maui.Graphics.dll",
+            $"{rootPath}/DLLs/Syncfusion.Licensing.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.Core.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.Data.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.DataGrid.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.DataSource.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.GridCommon.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.Inputs.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.ListView.dll",
+            $"{rootPath}/DLLs/Syncfusion.Maui.PullToRefresh.dll"
         ];
     }
 

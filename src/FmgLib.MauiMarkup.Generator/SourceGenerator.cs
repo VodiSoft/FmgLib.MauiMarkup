@@ -20,6 +20,8 @@ namespace FmgLib.MauiMarkup;
 public sealed class SourceGenerator : IIncrementalGenerator
 {
     private const string AutoGeneratePropertyName = "build_property.MauiMarkupSourceGenerator";
+    private const string MauiCoreGeneratePropertyName = "build_property.MauiMarkupGenerateMauiCoreExtensions";
+    private const string MauiMarkupAssemblyName = "FmgLib.MauiMarkup";
     private const string MauiMarkupAttributeName = "MauiMarkupAttribute";
     private const string MauiMarkupShortName = "MauiMarkup";
     private const string MauiMarkupAttachedPropAttributeName = "MauiMarkupAttachedPropAttribute";
@@ -50,14 +52,16 @@ public sealed class SourceGenerator : IIncrementalGenerator
             .Select(static (symbol, _) => symbol!);
 
         var compilationAndTypes = context.CompilationProvider.Combine(candidates.Collect());
-        var autoGenerationEnabled = context.AnalyzerConfigOptionsProvider
-            .Select(static (optionsProvider, _) => IsAutoGenerationEnabled(optionsProvider));
+        var generationOptions = context.AnalyzerConfigOptionsProvider
+            .Select(static (optionsProvider, _) =>
+                (AutoThirdParty: IsAutoGenerationEnabled(optionsProvider),
+                 MauiCore: IsMauiCoreGenerationEnabled(optionsProvider)));
 
-        var generationInput = compilationAndTypes.Combine(autoGenerationEnabled);
+        var generationInput = compilationAndTypes.Combine(generationOptions);
 
         context.RegisterSourceOutput(generationInput, static (productionContext, source) =>
         {
-            ExecuteGeneration(source.Left.Left, source.Left.Right, source.Right, productionContext);
+            ExecuteGeneration(source.Left.Left, source.Left.Right, source.Right.AutoThirdParty, source.Right.MauiCore, productionContext);
         });
     }
 
@@ -106,9 +110,16 @@ public sealed class SourceGenerator : IIncrementalGenerator
     /// <param name="candidateTypes">The value used for <paramref name="candidateTypes"/>.</param>
     /// <param name="autoGenerateForThirdPartyControls">The value used for <paramref name="autoGenerateForThirdPartyControls"/>.</param>
     /// <param name="context">The value used for <paramref name="context"/>.</param>
-    private static void ExecuteGeneration(Compilation compilation, ImmutableArray<INamedTypeSymbol> candidateTypes, bool autoGenerateForThirdPartyControls, SourceProductionContext context)
+    private static void ExecuteGeneration(Compilation compilation, ImmutableArray<INamedTypeSymbol> candidateTypes, bool autoGenerateForThirdPartyControls, bool generateMauiCoreExtensions, SourceProductionContext context)
     {
-        if (candidateTypes.IsDefaultOrEmpty && !autoGenerateForThirdPartyControls)
+        // The MAUI core pass is reserved for building FmgLib.MauiMarkup itself: the generated
+        // extensions are compiled into the shipped assembly. Guarding on the assembly name makes
+        // it impossible for a consumer project to duplicate the built-in extension classes
+        // (which would cause ambiguous-call compile errors) by toggling the build property.
+        var runMauiCorePass = generateMauiCoreExtensions &&
+            string.Equals(compilation.AssemblyName, MauiMarkupAssemblyName, StringComparison.Ordinal);
+
+        if (candidateTypes.IsDefaultOrEmpty && !autoGenerateForThirdPartyControls && !runMauiCorePass)
         {
             return;
         }
@@ -123,9 +134,14 @@ public sealed class SourceGenerator : IIncrementalGenerator
             GenerateForAttachedAttributes(compilation, generatorTypeSymbol, context);
         }
 
+        if (runMauiCorePass)
+        {
+            GenerateForReferencedAssemblies(compilation, generatedTargets, context, mauiCoreAssemblies: true);
+        }
+
         if (autoGenerateForThirdPartyControls)
         {
-            GenerateForThirdPartyControls(compilation, generatedTargets, context);
+            GenerateForReferencedAssemblies(compilation, generatedTargets, context, mauiCoreAssemblies: false);
         }
     }
 
@@ -162,63 +178,17 @@ public sealed class SourceGenerator : IIncrementalGenerator
         }
     }
 
-    private static void GenerateForThirdPartyControls(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
-    {
-        var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
-        if (bindableObjectType is null)
-        {
-            return;
-        }
-
-        var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
-
-        foreach (var reference in compilation.References)
-        {
-            context.CancellationToken.ThrowIfCancellationRequested();
-
-            if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol)
-            {
-                continue;
-            }
-
-            if (IsExcludedAssembly(assemblySymbol))
-            {
-                continue;
-            }
-
-            foreach (var targetType in EnumerateAllTypes(assemblySymbol.GlobalNamespace))
-            {
-                context.CancellationToken.ThrowIfCancellationRequested();
-
-                if (!IsEligibleAutoGenerationType(targetType, bindableObjectType))
-                {
-                    continue;
-                }
-
-                if (!generatedTargets.Add(targetType))
-                {
-                    continue;
-                }
-
-                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
-                if (!generated)
-                {
-                    continue;
-                }
-
-                var uniqueName = AllocateHintName(suffixes, hintName);
-                context.AddSource($"{uniqueName}.g.cs", sourceText);
-            }
-        }
-    }
-
     /// <summary>
-    /// Generates output for the <c>GenerateForThirdPartyControls</c> operation.
+    /// Generates fluent extensions for eligible <c>BindableObject</c> types in referenced assemblies.
+    /// When <paramref name="mauiCoreAssemblies"/> is <see langword="true"/> only the
+    /// <c>Microsoft.Maui*</c> assemblies are scanned (used while building FmgLib.MauiMarkup itself);
+    /// otherwise they are excluded and only third-party assemblies are scanned.
     /// </summary>
     /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
     /// <param name="generatedTargets">The value used for <paramref name="generatedTargets"/>.</param>
     /// <param name="context">The value used for <paramref name="context"/>.</param>
-    private static void GenerateForThirdPartyControls(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
+    /// <param name="mauiCoreAssemblies">Whether to scan the MAUI core assemblies instead of third-party ones.</param>
+    private static void GenerateForReferencedAssemblies(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context, bool mauiCoreAssemblies)
     {
         var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
         if (bindableObjectType is null)
@@ -237,7 +207,7 @@ public sealed class SourceGenerator : IIncrementalGenerator
                 continue;
             }
 
-            if (IsExcludedAssembly(assemblySymbol))
+            if (mauiCoreAssemblies ? !IsMauiCoreAssembly(assemblySymbol) : IsExcludedAssembly(assemblySymbol))
             {
                 continue;
             }
@@ -247,6 +217,15 @@ public sealed class SourceGenerator : IIncrementalGenerator
                 context.CancellationToken.ThrowIfCancellationRequested();
 
                 if (!IsEligibleAutoGenerationType(targetType, bindableObjectType))
+                {
+                    continue;
+                }
+
+                // Legacy Xamarin.Forms compatibility types are obsolete and expose collection
+                // APIs (e.g. RelativeLayout.IRelativeList.Add overloads) that the generated
+                // helpers cannot call unambiguously; the hand-written CompatibilityLayoutExtension
+                // keeps covering the supported surface.
+                if (mauiCoreAssemblies && targetType.ToDisplayString().IndexOf(".Compatibility.", StringComparison.Ordinal) >= 0)
                 {
                     continue;
                 }
@@ -472,6 +451,26 @@ public sealed class SourceGenerator : IIncrementalGenerator
                value.Equals("on", StringComparison.OrdinalIgnoreCase) ||
                value.Equals("enable", StringComparison.OrdinalIgnoreCase) ||
                value.Equals("enabled", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Evaluates whether the <c>IsMauiCoreGenerationEnabled</c> condition is satisfied.
+    /// </summary>
+    /// <param name="optionsProvider">The value used for <paramref name="optionsProvider"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
+    private static bool IsMauiCoreGenerationEnabled(AnalyzerConfigOptionsProvider optionsProvider)
+    {
+        return optionsProvider.GlobalOptions.TryGetValue(MauiCoreGeneratePropertyName, out var rawValue) && IsTrue(rawValue);
+    }
+
+    /// <summary>
+    /// Evaluates whether the assembly is one of the .NET MAUI core assemblies.
+    /// </summary>
+    /// <param name="assemblySymbol">The value used for <paramref name="assemblySymbol"/>.</param>
+    /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
+    private static bool IsMauiCoreAssembly(IAssemblySymbol assemblySymbol)
+    {
+        return assemblySymbol.Name.StartsWith("Microsoft.Maui", StringComparison.Ordinal);
     }
 
     /// <summary>
