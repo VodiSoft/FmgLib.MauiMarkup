@@ -19,16 +19,24 @@ public sealed partial class ExtensionGenerator
     readonly bool isVisualElement;
     bool isGeneratedExtension = false;
     readonly AttachedModel? attachedModel;
+    readonly ISet<INamedTypeSymbol>? generationSet;
     List<string> bindablePropertyNames = new();
     List<string> redefinedProperties = new();
+    HashSet<string> skippedProperties = new();
 
     StringBuilder builder = new();
 
     public ExtensionGenerator(Compilation compilation, INamedTypeSymbol symbol, CancellationToken cancellationToken)
+        : this(compilation, symbol, generationSet: null, cancellationToken)
+    {
+    }
+
+    public ExtensionGenerator(Compilation compilation, INamedTypeSymbol symbol, ISet<INamedTypeSymbol>? generationSet, CancellationToken cancellationToken)
     {
         this.compilation = compilation;
         this.mainSymbol = symbol;
         this.cancellationToken = cancellationToken;
+        this.generationSet = generationSet;
         isVisualElement = Helpers.IsVisualElement(mainSymbol);
     }
 
@@ -90,7 +98,7 @@ public static partial class {className}
             .OrderBy(property => property.Name, StringComparer.Ordinal)
             .ToList();
 
-        redefinedProperties = IdentifyRedefinedProperties(propertiesMap);
+        ClassifyRedefinedProperties(propertiesMap);
 
         var fieldsMap = members
             .OfType<IFieldSymbol>()
@@ -105,10 +113,12 @@ public static partial class {className}
             .ToList();
 
         var properties = propertiesMap
+            .Where(property => !skippedProperties.Contains(property.Name))
             .Where(property => (!property.IsReadOnly && !IsSetterRestricted(property)) || bindablePropertyNames.Any(name => name.Equals(property.Name, StringComparison.Ordinal)))
             .ToList();
 
         var readOnlyListProperties = propertiesMap
+            .Where(property => !skippedProperties.Contains(property.Name))
             .Where(property => property.IsReadOnly &&
                 !bindablePropertyNames.Any(name => name.Equals(property.Name, StringComparison.InvariantCultureIgnoreCase)) &&
                 IsSupportedCollection(property))
@@ -212,24 +222,93 @@ public static partial class {className}
         return (implementsCollection || !isReadOnlyList) && !isBlockedReadOnly;
     }
 
-    List<string> IdentifyRedefinedProperties(IEnumerable<IPropertySymbol> properties)
+    /// <summary>
+    /// Classifies declared properties that collide by name with a base-class property.
+    ///
+    /// - Same property type and the base's fluent extensions exist (base is part of this
+    ///   generation run, or it is a MAUI core type whose extensions ship inside
+    ///   FmgLib.MauiMarkup): SKIP — the base's generic extension already serves this type, and
+    ///   duplicating it would make every call ambiguous (CS0121). This covers the common
+    ///   "redeclare the base BindableProperty for convenience" pattern (e.g. Syncfusion
+    ///   SfButton.TextColor over ButtonBase.TextColor).
+    /// - Same property type but no base extension exists: generate normally, WITHOUT a suffix —
+    ///   the name matches the property and there is nothing to conflict with.
+    /// - Different property type (a genuine `new` redefinition such as SfAvatarView.Background
+    ///   changing Brush to Color): generate with the documented "New" suffix, because same-name
+    ///   overloads differing only in the builder's generic argument would make lambda call
+    ///   sites ambiguous and could silently target the wrong BindableProperty.
+    /// </summary>
+    /// <param name="properties">The declared public properties of the target type.</param>
+    void ClassifyRedefinedProperties(IEnumerable<IPropertySymbol> properties)
     {
-        var basePropertyNames = new HashSet<string>(StringComparer.Ordinal);
-        for (var baseType = mainSymbol.BaseType; baseType != null; baseType = baseType.BaseType)
+        redefinedProperties = new List<string>();
+        skippedProperties = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var property in properties)
         {
-            foreach (var baseProperty in baseType.GetMembers().OfType<IPropertySymbol>())
+            IPropertySymbol? baseProperty = null;
+            INamedTypeSymbol? declaringBase = null;
+
+            for (var baseType = mainSymbol.BaseType; baseType != null; baseType = baseType.BaseType)
             {
-                if (baseProperty.DeclaredAccessibility == Accessibility.Public && !HasObsoleteAttribute(baseProperty))
+                baseProperty = baseType.GetMembers(property.Name)
+                    .OfType<IPropertySymbol>()
+                    .FirstOrDefault(candidate => candidate.DeclaredAccessibility == Accessibility.Public && !HasObsoleteAttribute(candidate));
+
+                if (baseProperty != null)
                 {
-                    basePropertyNames.Add(baseProperty.Name);
+                    declaringBase = baseType;
+                    break;
                 }
             }
+
+            if (baseProperty == null || declaringBase == null)
+            {
+                continue;
+            }
+
+            if (SymbolEqualityComparer.Default.Equals(property.Type, baseProperty.Type))
+            {
+                if (BaseGeneratesProperty(declaringBase, baseProperty))
+                {
+                    skippedProperties.Add(property.Name);
+                }
+            }
+            else if (!property.IsOverride)
+            {
+                redefinedProperties.Add(property.Name);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Evaluates whether fluent extensions for the given base property will exist: the base type
+    /// must have extensions (part of this generation run, or a MAUI core type shipped with the
+    /// library) and the property itself must be generation-eligible there.
+    /// </summary>
+    /// <param name="declaringBase">The base type declaring the colliding property.</param>
+    /// <param name="baseProperty">The colliding base property.</param>
+    /// <returns><see langword="true"/> when the base's extension method covers this property.</returns>
+    bool BaseGeneratesProperty(INamedTypeSymbol declaringBase, IPropertySymbol baseProperty)
+    {
+        var assemblyName = declaringBase.ContainingAssembly?.Name ?? string.Empty;
+        var isCovered = assemblyName.StartsWith("Microsoft.Maui", StringComparison.Ordinal) ||
+                        (generationSet != null && generationSet.Contains(declaringBase));
+
+        if (!isCovered)
+        {
+            return false;
         }
 
-        return properties
-            .Where(property => basePropertyNames.Contains(property.Name) && !property.IsOverride)
-            .Select(property => property.Name)
-            .ToList();
+        if (!baseProperty.IsReadOnly && !IsSetterRestricted(baseProperty))
+        {
+            return true;
+        }
+
+        // A restricted setter still generates when a matching public BindableProperty field exists.
+        return declaringBase.GetMembers(baseProperty.Name + "Property")
+            .OfType<IFieldSymbol>()
+            .Any(field => field.IsStatic && field.DeclaredAccessibility == Accessibility.Public);
     }
 
     bool HasObsoleteAttribute(ISymbol symbol)

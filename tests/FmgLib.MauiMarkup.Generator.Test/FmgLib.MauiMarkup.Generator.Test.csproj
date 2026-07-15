@@ -152,6 +152,9 @@
 	  <None Update="DLLs\SkiaSharp.Views.Maui.Core.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="DLLs\Syncfusion.Maui.Toolkit.dll">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="DLLs\Syncfusion.Licensing.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

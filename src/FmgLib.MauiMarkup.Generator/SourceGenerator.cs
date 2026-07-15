@@ -36,6 +36,14 @@ public sealed class SourceGenerator : IIncrementalGenerator
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor GenerationFailedDescriptor = new(
+        id: "FMMG002",
+        title: "MauiMarkup extension generation failed for a type",
+        messageFormat: "FmgLib.MauiMarkup could not generate fluent extensions for '{0}' and skipped it: {1}",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
     /// <summary>
     /// Executes the <c>Initialize</c> operation.
     /// </summary>
@@ -124,49 +132,93 @@ public sealed class SourceGenerator : IIncrementalGenerator
             return;
         }
 
-        var generatedTargets = new HashSet<INamedTypeSymbol>(TypeSymbolComparer);
+        var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
+
+        // Phase 1 — collect every generation target up front. Knowing the full set lets the
+        // per-type generator decide correctly whether a base class's fluent extensions will
+        // exist (so identically-typed property redefinitions can be skipped instead of getting
+        // a bogus "New" suffix or duplicating the base and breaking callers with CS0121).
+        var orderedTargets = new List<INamedTypeSymbol>();
+        var targetSet = new HashSet<INamedTypeSymbol>(TypeSymbolComparer);
+
+        void AddTarget(INamedTypeSymbol type)
+        {
+            if (targetSet.Add(type))
+            {
+                orderedTargets.Add(type);
+            }
+        }
+
+        // A requested control drags its eligible third-party base classes in with it: most of a
+        // leaf control's bindable surface (e.g. Syncfusion SfButton's Command/FontSize) is
+        // declared on non-MAUI base types, and callers expect those fluent methods to exist.
+        void AddTargetWithBases(INamedTypeSymbol type)
+        {
+            AddTarget(type);
+
+            if (bindableObjectType is null)
+            {
+                return;
+            }
+
+            for (var baseType = type.BaseType; baseType != null; baseType = baseType.BaseType)
+            {
+                // A base type can be unresolvable (missing transitive reference, version
+                // mismatch): stop walking instead of crashing — a generator exception would
+                // silently wipe EVERY generated extension in the consuming project.
+                if (baseType.TypeKind == TypeKind.Error || baseType.ContainingAssembly is null)
+                {
+                    break;
+                }
+
+                if (IsExcludedAssembly(baseType.ContainingAssembly))
+                {
+                    break; // MAUI core (shipped in the library) / System / FmgLib — covered.
+                }
+
+                if (IsEligibleAutoGenerationType(baseType, bindableObjectType))
+                {
+                    AddTarget(baseType);
+                }
+            }
+        }
 
         foreach (var generatorTypeSymbol in candidateTypes.Distinct(TypeSymbolComparer))
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
-            GenerateForMauiMarkupAttributes(compilation, generatorTypeSymbol, generatedTargets, context);
-            GenerateForAttachedAttributes(compilation, generatorTypeSymbol, context);
+            foreach (var attribute in generatorTypeSymbol.GetAttributes().Where(IsMauiMarkupAttribute))
+            {
+                foreach (var targetType in ExtractTypesFromAttribute(attribute).Distinct(TypeSymbolComparer))
+                {
+                    AddTargetWithBases(targetType);
+                }
+            }
         }
 
         if (runMauiCorePass)
         {
-            GenerateForReferencedAssemblies(compilation, generatedTargets, context, mauiCoreAssemblies: true);
+            CollectReferencedAssemblyTypes(compilation, bindableObjectType, AddTarget, context.CancellationToken, mauiCoreAssemblies: true);
         }
 
         if (autoGenerateForThirdPartyControls)
         {
-            GenerateForReferencedAssemblies(compilation, generatedTargets, context, mauiCoreAssemblies: false);
+            CollectReferencedAssemblyTypes(compilation, bindableObjectType, AddTargetWithBases, context.CancellationToken, mauiCoreAssemblies: false);
         }
-    }
 
-    /// <summary>
-    /// Generates output for the <c>GenerateForMauiMarkupAttributes</c> operation.
-    /// </summary>
-    /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
-    /// <param name="generatorTypeSymbol">The value used for <paramref name="generatorTypeSymbol"/>.</param>
-    /// <param name="generatedTargets">The value used for <paramref name="generatedTargets"/>.</param>
-    /// <param name="context">The value used for <paramref name="context"/>.</param>
-    private static void GenerateForMauiMarkupAttributes(Compilation compilation, INamedTypeSymbol generatorTypeSymbol, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context)
-    {
+        // Phase 2 — generate. Each target is isolated: if one exotic type cannot be processed,
+        // it is reported (FMMG002) and skipped, and every other extension is still produced.
+        // Without this isolation a single failure would erase ALL generated methods and flood
+        // the consuming project with confusing CS1955/CS0311 errors.
         var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
 
-        foreach (var attribute in generatorTypeSymbol.GetAttributes().Where(IsMauiMarkupAttribute))
+        foreach (var targetType in orderedTargets)
         {
-            foreach (var targetType in ExtractTypesFromAttribute(attribute).Distinct(TypeSymbolComparer))
-            {
-                context.CancellationToken.ThrowIfCancellationRequested();
-                if (!generatedTargets.Add(targetType))
-                {
-                    continue;
-                }
+            context.CancellationToken.ThrowIfCancellationRequested();
 
-                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
+            try
+            {
+                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, targetSet, context.CancellationToken).Build();
                 if (!generated)
                 {
                     continue;
@@ -175,32 +227,44 @@ public sealed class SourceGenerator : IIncrementalGenerator
                 var uniqueName = AllocateHintName(suffixes, hintName);
                 context.AddSource($"{uniqueName}.g.cs", sourceText);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(GenerationFailedDescriptor, location: null, targetType.ToDisplayString(), exception.Message));
+            }
+        }
+
+        foreach (var generatorTypeSymbol in candidateTypes.Distinct(TypeSymbolComparer))
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+            GenerateForAttachedAttributes(compilation, generatorTypeSymbol, context);
         }
     }
 
     /// <summary>
-    /// Generates fluent extensions for eligible <c>BindableObject</c> types in referenced assemblies.
+    /// Collects eligible <c>BindableObject</c> types from referenced assemblies.
     /// When <paramref name="mauiCoreAssemblies"/> is <see langword="true"/> only the
     /// <c>Microsoft.Maui*</c> assemblies are scanned (used while building FmgLib.MauiMarkup itself);
     /// otherwise they are excluded and only third-party assemblies are scanned.
     /// </summary>
     /// <param name="compilation">The value used for <paramref name="compilation"/>.</param>
-    /// <param name="generatedTargets">The value used for <paramref name="generatedTargets"/>.</param>
-    /// <param name="context">The value used for <paramref name="context"/>.</param>
+    /// <param name="bindableObjectType">The resolved <c>BindableObject</c> symbol.</param>
+    /// <param name="addTarget">Callback receiving each eligible type.</param>
+    /// <param name="cancellationToken">The value used for <paramref name="cancellationToken"/>.</param>
     /// <param name="mauiCoreAssemblies">Whether to scan the MAUI core assemblies instead of third-party ones.</param>
-    private static void GenerateForReferencedAssemblies(Compilation compilation, ISet<INamedTypeSymbol> generatedTargets, SourceProductionContext context, bool mauiCoreAssemblies)
+    private static void CollectReferencedAssemblyTypes(Compilation compilation, INamedTypeSymbol? bindableObjectType, Action<INamedTypeSymbol> addTarget, CancellationToken cancellationToken, bool mauiCoreAssemblies)
     {
-        var bindableObjectType = compilation.FindNamedType("Microsoft.Maui.Controls.BindableObject");
         if (bindableObjectType is null)
         {
             return;
         }
 
-        var suffixes = new Dictionary<string, int>(StringComparer.Ordinal);
-
         foreach (var reference in compilation.References)
         {
-            context.CancellationToken.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol)
             {
@@ -214,7 +278,7 @@ public sealed class SourceGenerator : IIncrementalGenerator
 
             foreach (var targetType in EnumerateAllTypes(assemblySymbol.GlobalNamespace))
             {
-                context.CancellationToken.ThrowIfCancellationRequested();
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (!IsEligibleAutoGenerationType(targetType, bindableObjectType))
                 {
@@ -230,19 +294,7 @@ public sealed class SourceGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                if (!generatedTargets.Add(targetType))
-                {
-                    continue;
-                }
-
-                var (hintName, sourceText, generated) = new ExtensionGenerator(compilation, targetType, context.CancellationToken).Build();
-                if (!generated)
-                {
-                    continue;
-                }
-
-                var uniqueName = AllocateHintName(suffixes, hintName);
-                context.AddSource($"{uniqueName}.g.cs", sourceText);
+                addTarget(targetType);
             }
         }
     }

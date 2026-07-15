@@ -1,0 +1,48 @@
+{
+    // FmgLib.MauiMarkup hot reload dev loop.
+    //
+    // Run one of these tasks (Terminal > Run Task…) and edit your Build() methods:
+    // every save is applied to the running app and all pages implementing
+    // IFmgLibHotReload are rebuilt automatically — no debugger required.
+    //
+    // Watch the terminal for:
+    //   dotnet watch 🔥 C# and Razor changes applied
+    //   FmgLib.MauiMarkup hot reload: update received … rebuilding N target(s)
+    //
+    // Tip: pass a specific device/simulator with -p:_DeviceName=... if needed.
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🔥 Hot Reload: Android",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [ "watch", "run", "-f", "netNETMAJOR_VERSION.0-android" ],
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "🔥 Hot Reload: iOS Simulator",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [ "watch", "run", "-f", "netNETMAJOR_VERSION.0-ios" ],
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "🔥 Hot Reload: Mac Catalyst",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [ "watch", "run", "-f", "netNETMAJOR_VERSION.0-maccatalyst" ],
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "🔥 Hot Reload: Windows",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [ "watch", "run", "-f", "netNETMAJOR_VERSION.0-windows10.0.19041.0" ],
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+}

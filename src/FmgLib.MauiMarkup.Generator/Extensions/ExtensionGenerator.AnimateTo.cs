@@ -20,7 +20,7 @@ public partial class ExtensionGenerator
         {info.propertyTypeName} fromValue = self.{info.propertyName};
         var transform = (double t) => Transformations.{transformationName}(fromValue, value, t);
         var callback = ({info.propertyTypeName} actValue) => {{ {callBackSetValue} }};
-        return Transformations.AnimateAsync<{info.propertyTypeName}>(self, ""Animate{info.propertyName}To"", transform, callback, length, easing);
+        return Transformations.AnimateAsync<{info.propertyTypeName}>(self, ""Animate{info.methodName}To"", transform, callback, length, easing);
     }}
     ");
     }

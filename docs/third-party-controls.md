@@ -141,19 +141,38 @@ When enabled, the generator scans referenced third-party assemblies and creates 
 
 **Trade-off:** automatic mode is convenient but generates code for everything it finds, which can increase compile time in large solutions. The attribute approach keeps generation scoped to what you use.
 
-## Naming Collision Rule: `PropertyName + New`
+## Base Classes Are Generated Automatically
 
-If a control **redefines an inherited property with the `new` keyword**, the generated fluent method gets a `New` suffix to avoid ambiguity with the base-class extension.
+Annotating a leaf control also generates fluent extensions for its **eligible third-party base classes** — most of a control's bindable surface usually lives there. For example, Syncfusion's `SfButton` inherits `Command`, `FontSize`, `FontAttributes`, `Text`… from `ButtonBase`; `[MauiMarkup(typeof(SfButton))]` alone produces both `SfButtonExtension` **and** `ButtonBaseExtension`, so every inherited property is fluently available:
 
-Example: `SfAvatarView.Background` hides `VisualElement.Background`, so:
+```csharp
+[MauiMarkup(typeof(SfButton))]
+public class Markup { }
+
+new SfButton()
+    .Text("Login")
+    .Command(vm.LoginCommand)      // declared on ButtonBase — generated automatically
+    .FontSize(15)                  // declared on ButtonBase
+    .TextColor(Colors.White)       // redeclared identically on SfButton — served by ButtonBase
+    .StrokeThickness(1)
+```
+
+(MAUI core base classes are never re-generated — their extensions already ship inside the library.)
+
+## Redefined-Property Rules
+
+Controls sometimes re-declare a base class's property. The generator handles the two cases differently:
+
+- **Same property type (the common "convenience redeclaration")** — e.g. `SfButton.TextColor` re-exposing `ButtonBase.TextColor`: the derived class gets **no duplicate method and no suffix**. The base class's generic extension (`TextColor<T>() where T : ButtonBase`) already serves the derived control; duplicating it would make every call ambiguous (CS0121).
+- **Different property type (a genuine `new` redefinition)** — e.g. `SfAvatarView.Background` changing `Brush` to `Color`: the derived method gets the **`New` suffix**, because same-named overloads differing only in the builder's generic argument would break lambda call sites and could silently target the wrong `BindableProperty`:
 
 ```csharp
 new SfAvatarView()
-    .BackgroundNew(Colors.LightBlue)   // SfAvatarView's own Background property
-    .Background(someBrush)             // inherited VisualElement.Background
+    .BackgroundNew(Colors.LightBlue)   // SfAvatarView's own (Color) Background property
+    .Background(someBrush)             // inherited VisualElement (Brush) Background
 ```
 
-If a method you expect seems "missing", check for the `New`-suffixed variant.
+If a method you expect seems "missing" on the leaf type, it is almost always served by a base-class extension under the **same name** — IntelliSense will still offer it; only truly type-changing redefinitions carry the `New` suffix.
 
 ## Practical Notes
 
