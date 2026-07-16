@@ -13,11 +13,11 @@
 		<Summary>FmgLib.MauiMarkup with C# Markup classes and fluent helper methods</Summary>
 		<Title>FmgLib.MauiMarkup</Title>
 		<Version>10.1.1</Version>
-		<Authors>FmgYazılım</Authors>
-		<Company>Fmg Yazılım</Company>
+		<Authors>VodiSoft</Authors>
+		<Company>VodiSoft</Company>
 		<Copyright>©2025</Copyright>
-		<PackageProjectUrl>https://fmglib-mauimarkup.fmgyazilim.com/</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/FmgLib/FmgLib.MauiMarkup</RepositoryUrl>
+		<PackageProjectUrl>https://vodisoft.com/en/docs/fmglibmauimarkup/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/VodiSoft/FmgLib.MauiMarkup</RepositoryUrl>
 		<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
 		<Description>C# Code Markup Library for .NET MAUI: FmgLib.MauiMarkup with C# Markup classes and fluent helper methods</Description>
 		<PackageTags>xamarin,xamarin.forms,net,maui,netmaui,markup,csharpformarkup,csharp,csharpmarkup,xaml,mobile,android,ios,macos,windows,noxaml,localization,fullcsharp,fmglib,mauimarkup,markupmaui,tizen,localize,multilang,mutlilanguage,desktop,language</PackageTags>

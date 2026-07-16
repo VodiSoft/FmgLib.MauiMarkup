@@ -10,11 +10,11 @@
 		<PackageId>FmgLib.MauiMarkup.Generator</PackageId>
 		<IsPackable>false</IsPackable>
 		<Summary>FmgLib.MauiMarkup with C# Markup classes and fluent helper methods</Summary>
-		<Authors>FmgYazılım</Authors>
-		<Company>Fmg Yazılım</Company>
+		<Authors>VodiSoft</Authors>
+		<Company>VodiSoft</Company>
 		<Copyright>©2024</Copyright>
-		<PackageProjectUrl>https://github.com/FmgLib/FmgLib.MauiMarkup</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/FmgLib/FmgLib.MauiMarkup</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/VodiSoft/FmgLib.MauiMarkup</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/VodiSoft/FmgLib.MauiMarkup</RepositoryUrl>
 		<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
 		<Description>C# Code Markup Library for .NET MAUI</Description>
 		<PackageTags>xamarin,xamarin.forms,net,maui,netmaui,markup,csharpformarkup,csharp,csharpmarkup,xaml,mobile,android,ios,macos,windows,noxaml</PackageTags>

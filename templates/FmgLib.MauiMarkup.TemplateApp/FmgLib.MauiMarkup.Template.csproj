@@ -6,10 +6,10 @@
 		<PackageId>FmgLib.MauiMarkup.Template</PackageId>
 		<PackageVersion>10.1.1</PackageVersion>
 		<Title>FmgLib.MauiMarkup.Template</Title>
-		<Authors>FmgYazılım</Authors>
+		<Authors>VodiSoft</Authors>
 		<Description>C# Markup (No XAML) templates for .NET MAUI application with Hotreload process.</Description>
 		<PackageTags>MAUI,Android,iOS,macOS,Windows,MacCatalyst,Tizen,fmglib,mauimarkup,toolkit,mvvm,extension,template,app,mobile,desktop,xamarin,xamarin.forms,net,maui,netmaui,markup,csharpformarkup,csharp,csharpmarkup,xaml,mobile,android,ios,macos,windows,noxaml,fmglib</PackageTags>
-		<PackageProjectUrl>https://fmglib-mauimarkup.fmgyazilim.com/</PackageProjectUrl>
+		<PackageProjectUrl>https://vodisoft.com/en/docs/fmglibmauimarkup/</PackageProjectUrl>
 
 		<PackageType>Template</PackageType>
 		<TargetFramework>net10.0</TargetFramework>
