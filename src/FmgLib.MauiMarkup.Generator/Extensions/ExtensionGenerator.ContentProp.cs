@@ -72,7 +72,7 @@ public partial class ExtensionGenerator
         IList<{elementTypeName}> {info.camelCaseName})
     {{
         foreach (var item in {info.camelCaseName})
-            self.{info.propertyName}{tail}.Add(item);
+            {info.accessedWith}.{info.propertyName}{tail}.Add(item);
         return self;
     }}
 
@@ -80,7 +80,7 @@ public partial class ExtensionGenerator
         params {elementTypeName}[] {info.camelCaseName})
     {{
         foreach (var item in {info.camelCaseName})
-            self.{info.propertyName}{tail}.Add(item);
+            {info.accessedWith}.{info.propertyName}{tail}.Add(item);
         return self;
     }}
 
@@ -89,7 +89,7 @@ public partial class ExtensionGenerator
     {{
         var {info.camelCaseName} = configure();
         foreach (var item in {info.camelCaseName})
-            self.{info.propertyName}{tail}.Add(item);
+            {info.accessedWith}.{info.propertyName}{tail}.Add(item);
         return self;
     }}
     ");
@@ -104,7 +104,7 @@ public partial class ExtensionGenerator
         where T : {info.MainSymbolName}
     {{
         foreach (var item in {info.camelCaseName})
-            self.{info.propertyName}{tail}.Add(item);
+            {info.accessedWith}.{info.propertyName}{tail}.Add(item);
         return self;
     }}
 
@@ -113,7 +113,7 @@ public partial class ExtensionGenerator
         where T : {info.MainSymbolName}
     {{
         foreach (var item in {info.camelCaseName})
-            self.{info.propertyName}{tail}.Add(item);
+            {info.accessedWith}.{info.propertyName}{tail}.Add(item);
         return self;
     }}
 
@@ -123,7 +123,7 @@ public partial class ExtensionGenerator
     {{
         var {info.camelCaseName} = configure();
         foreach (var item in {info.camelCaseName})
-            self.{info.propertyName}{tail}.Add(item);
+            {info.accessedWith}.{info.propertyName}{tail}.Add(item);
         return self;
     }}
     ");

@@ -233,4 +233,59 @@ public static class Helpers
 
         return false;
     }
+
+    /// <summary>
+    /// Evaluates whether <paramref name="type"/> is visible from any external assembly — i.e.
+    /// safe to use as a parameter/return type on a <c>public</c> generated extension method.
+    ///
+    /// Third-party libraries occasionally expose a <c>public</c> property or event whose TYPE
+    /// (or one of its generic type arguments, or its array element type) is <c>internal</c> or a
+    /// nested private/protected type — a deliberate "settable internally, readable externally"
+    /// pattern, or simply an oversight. Generating a public method with such a type in its
+    /// signature would fail to compile for every consumer (CS0053/CS0051-class errors), so those
+    /// members are skipped rather than attempted.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns><see langword="true"/> when the type (and its constituent types) are all public.</returns>
+    public static bool IsEffectivelyPublic(ITypeSymbol type)
+    {
+        switch (type)
+        {
+            case IArrayTypeSymbol array:
+                return IsEffectivelyPublic(array.ElementType);
+
+            case IPointerTypeSymbol pointer:
+                return IsEffectivelyPublic(pointer.PointedAtType);
+
+            case ITypeParameterSymbol:
+                // A generic parameter of the containing type/method is always in scope.
+                return true;
+
+            case INamedTypeSymbol named:
+                for (var current = named; current != null; current = current.ContainingType)
+                {
+                    if (current.DeclaredAccessibility != Accessibility.Public)
+                    {
+                        return false;
+                    }
+                }
+
+                if (named.IsGenericType)
+                {
+                    foreach (var typeArgument in named.TypeArguments)
+                    {
+                        if (!IsEffectivelyPublic(typeArgument))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+
+            default:
+                // Primitives, dynamic, etc. — always accessible.
+                return true;
+        }
+    }
 }

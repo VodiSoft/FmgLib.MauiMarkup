@@ -130,6 +130,12 @@ public static partial class {className}
            .Where(@event => @event.Name.IndexOf('.') < 0)
            .Where(@event => !HasEditorBrowsable(@event, editorBrowsableAttribute))
            .Where(@event => !HasObsoleteAttribute(@event))
+           // Same reasoning as static properties: `self.Event += handler` on a static event is a
+           // compile error (CS0176), and a static event is process-wide, not per-instance, state.
+           .Where(@event => !@event.IsStatic)
+           // The generated handler parameter/lambda action type must itself be public, or every
+           // consumer outside this assembly fails to compile against the generated method.
+           .Where(@event => Helpers.IsEffectivelyPublic(@event.Type))
            .GroupBy(@event => @event.Name, StringComparer.OrdinalIgnoreCase)
            .Select(group => group.First())
            .OrderBy(@event => @event.Name, StringComparer.Ordinal)
@@ -166,7 +172,48 @@ public static partial class {className}
 
     bool IsEligibleProperty(IPropertySymbol property)
     {
-        return property.DeclaredAccessibility == Accessibility.Public && !HasObsoleteAttribute(property);
+        if (property.DeclaredAccessibility != Accessibility.Public || HasObsoleteAttribute(property))
+        {
+            return false;
+        }
+
+        // Static properties are type-level configuration (e.g. a shared default), not per-instance
+        // state — an instance-fluent `new Foo().Bar(value)` extension would silently write to the
+        // TYPE, not to `self`, which is misleading API design and, worse, several of the generated
+        // shapes (notably Animate…To) hardcode an instance access and would emit `self.Bar = value`
+        // for a static member, which fails to compile (CS0176). Skipping statics entirely avoids the
+        // whole class of bugs rather than special-casing every generation shape. Setting a static
+        // config knob remains a single plain C# statement (`SomeControl.Bar = value;`) that needs no
+        // fluent wrapper.
+        if (property.IsStatic)
+        {
+            return false;
+        }
+
+        // Ref-returning properties (`ref readonly T Foo => ref field;`) cannot be targeted by a
+        // normal `self.Foo = value` assignment.
+        if (property.ReturnsByRef || property.ReturnsByRefReadonly)
+        {
+            return false;
+        }
+
+        // A `ref struct` (e.g. Span<T>) property type cannot be used as a generic method parameter
+        // or captured in a lambda/local, both of which the generated overloads require.
+        if (property.Type.IsRefLikeType)
+        {
+            return false;
+        }
+
+        // A public property whose type (or a generic type argument / array element type) is not
+        // itself public cannot appear in a public method signature without breaking every caller
+        // outside this assembly (CS0053-class errors). This is an occasional, deliberate or
+        // accidental pattern in third-party libraries; skip rather than emit uncompilable code.
+        if (!Helpers.IsEffectivelyPublic(property.Type))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     bool CanGenerateITextAlignmentExtensions()
