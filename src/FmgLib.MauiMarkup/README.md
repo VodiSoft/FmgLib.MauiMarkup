@@ -75,4 +75,4 @@ Complete sample applications live in the repository's [`sample/`](https://github
 Certain core property-building and styling components were originally based on
 Sharp.UI and have since been developed
 for FmgLib.MauiMarkup. The applicable MIT notice is included in
-[THIRD-PARTY-NOTICES](../../THIRD-PARTY-NOTICES).
+[THIRD-PARTY-NOTICES](https://github.com/VodiSoft/FmgLib.MauiMarkup/blob/master/THIRD-PARTY-NOTICES).
