@@ -96,3 +96,10 @@ The [`sample/`](sample) folder contains complete applications: a 2048 game, an F
 ## License
 
 See [LICENSE](src/FmgLib.MauiMarkup/LICENSE).
+
+## Third-party notices
+
+Certain core property-building and styling components were originally based on
+Sharp.UI and have since been developed
+for FmgLib.MauiMarkup. The applicable MIT notice is included in
+[THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES).

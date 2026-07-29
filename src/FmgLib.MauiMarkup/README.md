@@ -69,3 +69,10 @@ Highlights: [Getting Started](https://github.com/FmgLib/FmgLib.MauiMarkup/blob/m
 ## Samples
 
 Complete sample applications live in the repository's [`sample/`](https://github.com/FmgLib/FmgLib.MauiMarkup/tree/master/sample) folder.
+
+## Third-party notices
+
+Certain core property-building and styling components were originally based on
+Sharp.UI and have since been developed
+for FmgLib.MauiMarkup. The applicable MIT notice is included in
+[THIRD-PARTY-NOTICES](../../THIRD-PARTY-NOTICES).

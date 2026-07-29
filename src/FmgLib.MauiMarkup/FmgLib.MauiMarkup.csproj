@@ -12,14 +12,14 @@
 		<PackageId>FmgLib.MauiMarkup</PackageId>
 		<Summary>FmgLib.MauiMarkup with C# Markup classes and fluent helper methods</Summary>
 		<Title>FmgLib.MauiMarkup</Title>
-		<Version>10.1.2</Version>
+		<Version>10.1.3</Version>
 		<Authors>VodiSoft</Authors>
 		<Company>VodiSoft</Company>
-		<Copyright>©2025</Copyright>
+		<Copyright>©2026</Copyright>
 		<PackageProjectUrl>https://vodisoft.com/en/docs/fmglibmauimarkup/</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/VodiSoft/FmgLib.MauiMarkup</RepositoryUrl>
 		<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
-		<Description>C# Code Markup Library for .NET MAUI: FmgLib.MauiMarkup with C# Markup classes and fluent helper methods</Description>
+		<Description>C# Code Markup Library for .NET MAUI: UI Development, Multi Lang (Localization) with Fluent Methods and Hot Reload</Description>
 		<PackageTags>xamarin,xamarin.forms,net,maui,netmaui,markup,csharpformarkup,csharp,csharpmarkup,xaml,mobile,android,ios,macos,windows,noxaml,localization,fullcsharp,fmglib,mauimarkup,markupmaui,tizen,localize,multilang,mutlilanguage,desktop,language</PackageTags>
 		<Configurations>Debug;Release</Configurations>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -29,7 +29,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.90" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,6 +39,7 @@
 
 	<ItemGroup>
 		<None Include="LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\..\THIRD-PARTY-NOTICES" Pack="true" PackagePath="" />
 		<None Include="nuget.png" Pack="true" PackagePath="" />
 		<None Include="README.md" Pack="true" PackagePath="" />
 		<None Include="buildTransitive/FmgLib.MauiMarkup.props" Pack="true" PackagePath="buildTransitive/FmgLib.MauiMarkup.props" />

@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+// Portions of this file incorporate and extend code originally from CommunityToolkit.Maui.Markup.
+// Copyright (c) .NET Foundation and Contributors
+// Licensed under the MIT License. See THIRD-PARTY-NOTICES for details.
+
+using System.Linq.Expressions;
 
 namespace FmgLib.MauiMarkup;
 

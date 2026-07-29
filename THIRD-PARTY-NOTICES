@@ -1,9 +1,33 @@
-﻿MIT License
+THIRD-PARTY-NOTICES
+===================
 
-Copyright (c) 2026 VodiSoft
+Sharp.UI
+--------
+
+Certain core property-building and styling components in FmgLib.MauiMarkup incorporate and extend code originally from Sharp.UI.
+
+Copyright (c) 2022 Pawel Krzywdzinski
+
+All rights reserved.
+
+Sharp.UI repository: https://github.com/idexus/Sharp.UI
+
+CommunityToolkit.Maui.Markup
+----------------------------
+
+Certain typed-binding components in FmgLib.MauiMarkup incorporate and extend code originally from CommunityToolkit.Maui.Markup.
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+CommunityToolkit.Maui.Markup repository: https://github.com/CommunityToolkit/Maui.Markup
+
+MIT License (applies to the notices above)
+------------------------------------------
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "FmgLib.MauiMarkup"), to deal
+of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is

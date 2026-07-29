@@ -1,4 +1,8 @@
-﻿using System.Linq.Expressions;
+// Portions of this file incorporate and extend code originally from Sharp.UI.
+// Copyright (c) 2022 Pawel Krzywdzinski
+// Licensed under the MIT License. See THIRD-PARTY-NOTICES for details.
+
+using System.Linq.Expressions;
 
 namespace FmgLib.MauiMarkup;
 

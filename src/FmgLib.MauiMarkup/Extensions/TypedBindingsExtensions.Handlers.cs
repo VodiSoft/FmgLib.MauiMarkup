@@ -1,4 +1,8 @@
-﻿using Microsoft.Maui.Controls.Internals;
+// Portions of this file incorporate and extend code originally from CommunityToolkit.Maui.Markup.
+// Copyright (c) .NET Foundation and Contributors
+// Licensed under the MIT License. See THIRD-PARTY-NOTICES for details.
+
+using Microsoft.Maui.Controls.Internals;
 
 namespace FmgLib.MauiMarkup;
 
