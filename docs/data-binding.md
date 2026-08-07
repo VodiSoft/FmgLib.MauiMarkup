@@ -20,12 +20,13 @@ new Label().Text(e => e.Path("UserName"));
 | `.StringFormat(string)` | `StringFormat=` | Format string applied to the result. |
 | `.Converter(IValueConverter)` | `Converter=` | Classic converter instance. |
 | `.Parameter(object)` | `ConverterParameter=` | Passed to the converter. |
-| `.Convert<Q>(Func<Q,T>)` | — | Inline conversion function (no converter class needed). |
-| `.ConvertBack<Q>(Func<T,Q>)` | — | Inline reverse conversion for two-way bindings. |
+| `.Convert<Q,R>(Func<Q,R>)` | — | Inline conversion function (no converter class needed). |
+| `.ConvertBack<R,Q>(Func<R,Q>)` | — | Inline reverse conversion for two-way bindings. |
 | `.FallbackValue(object)` | `FallbackValue=` | Used when the binding fails to resolve. |
 | `.TargetNullValue(object)` | `TargetNullValue=` | Used when the resolved value is `null`. |
 | `.Getter(...)` / `.Setter(...)` | compiled binding | Expression-based bindings — see [Compiled Bindings](compiled-bindings.md). |
-| `.Bindings(...)` | `MultiBinding` | Multiple sources — see [MultiBinding](multi-binding.md). |
+| `.Path(...)` more than once | `MultiBinding` | Multiple sources combined by `.MultiConvert(...)` — see [MultiBinding](multi-binding.md). |
+| `.Bindings(...)` | `MultiBinding` | Ready made child bindings — see [MultiBinding](multi-binding.md). |
 
 ## Binding to the `BindingContext` (MVVM)
 

@@ -77,7 +77,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FmgLib.MauiMarkup" Version="NETMAJOR_VERSION.*" />
+		<!-- FmgLib.MauiMarkup 10.2.0 and later ship both a net9.0 and a net10.0 assembly, so the same
+		     package version serves either target framework. -->
+		<PackageReference Include="FmgLib.MauiMarkup" Version="10.*" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="NETMAJOR_VERSION.*" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="NETMAJOR_VERSION.*" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="NETMAJOR_VERSION.*" />

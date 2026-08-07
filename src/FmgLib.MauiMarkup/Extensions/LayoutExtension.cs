@@ -21,6 +21,9 @@ public static partial class LayoutExtension
         return self;
     }
 
+// On .NET MAUI 9 the source generator emits these members from the control itself; the hand written
+// versions below exist only because .NET MAUI 10 no longer exposes them to the generator.
+#if NET10_0_OR_GREATER
     public static T IgnoreSafeArea<T>(this T self,
         bool ignoreSafeArea)
         where T : Layout
@@ -29,4 +32,6 @@ public static partial class LayoutExtension
         return self;
     }
     
+#endif
+
 }

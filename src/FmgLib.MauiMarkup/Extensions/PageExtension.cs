@@ -3,6 +3,9 @@
 public static partial class PageExtension
 {
 
+// On .NET MAUI 9 the source generator emits these members from the control itself; the hand written
+// versions below exist only because .NET MAUI 10 no longer exposes them to the generator.
+#if NET10_0_OR_GREATER
     public static T IsBusy<T>(this T self,
         bool isBusy)
         where T : Page
@@ -35,6 +38,8 @@ public static partial class PageExtension
         return self;
     }
 
+#endif
+
     public static T Padding<T>(this T self, double horizontalSize, double verticalSize) where T : Page
     {
         self.SetValue(Page.PaddingProperty, new Thickness(horizontalSize, verticalSize));
@@ -53,6 +58,9 @@ public static partial class PageExtension
         return self;
     }
 
+// On .NET MAUI 9 the source generator emits these members from the control itself; the hand written
+// versions below exist only because .NET MAUI 10 no longer exposes them to the generator.
+#if NET10_0_OR_GREATER
     public static T ContainerArea<T>(this T self,
         Rect containerArea)
         where T : Page
@@ -74,5 +82,7 @@ public static partial class PageExtension
         self.LayoutChanged += (o, arg) => action(self);
         return self;
     }
+
+#endif
 
 }

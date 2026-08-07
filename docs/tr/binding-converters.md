@@ -4,7 +4,7 @@ Converter'lar, bağlanan değeri kaynaktan hedefe (ve isteğe bağlı olarak ger
 
 ## Satır İçi `Convert` — converter sınıfı gerekmez
 
-Property builder'ın `Convert<Q>(Func<Q, T>)` metodu ham kaynak değerini (`Q`) alır ve hedef özellik tipini (`T`) döndürür:
+Property builder'ın `Convert<Q, R>(Func<Q, R>)` metodu ham kaynak değerini (`Q`) alır ve binding'in devrettiği değeri (`R`) döndürür: tekil binding'de hedef özelliğin tipi, [MultiBinding](multi-binding.md) içinde ise `MultiConvert`'e geçirilen değer. Her iki tip de lambda'dan çıkarıldığı için genelde yazmanıza gerek kalmaz:
 
 ```csharp
 public class CustomPage : ContentPage

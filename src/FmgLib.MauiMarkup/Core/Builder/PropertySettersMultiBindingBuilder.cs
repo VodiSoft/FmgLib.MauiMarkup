@@ -1,20 +1,17 @@
-﻿namespace FmgLib.MauiMarkup;
+#nullable enable
 
+namespace FmgLib.MauiMarkup;
+
+/// <summary>
+/// Multi binding builder for a style setter, opened with <c>Bindings(...)</c>. Every child is a ready made
+/// <see cref="BindingBase"/>; the values they produce are combined either by a converter of your own or by
+/// the fluent <c>MultiConvert</c> family.
+/// </summary>
 public sealed class PropertySettersMultiBindingBuilder<T> : IPropertySettersBuilder<T>
 {
-    private BindingMode bindingMode;
+    private readonly List<BindingEntry> _entries = new();
 
-    private IMultiValueConverter converter;
-
-    private string converterParameter;
-
-    private string stringFormat;
-
-    private IList<BindingBase> bindings;
-
-    private object fallbackValue;
-
-    private object targetNullValue;
+    private readonly MultiBindingSpec<T> _multi = new();
 
     public PropertySettersContext<T> Context { get; set; }
 
@@ -25,7 +22,6 @@ public sealed class PropertySettersMultiBindingBuilder<T> : IPropertySettersBuil
     public PropertySettersMultiBindingBuilder(PropertySettersContext<T> context)
     {
         Context = context;
-        bindings = new List<BindingBase>();
     }
 
     /// <summary>
@@ -34,105 +30,241 @@ public sealed class PropertySettersMultiBindingBuilder<T> : IPropertySettersBuil
     /// <returns><see langword="true"/> when the operation succeeds; otherwise, <see langword="false"/>.</returns>
     public bool Build()
     {
-        if (bindings != null && bindings.Count > 0)
+        var binding = FluentBindingFactory.Create(_entries, _multi, null, Context.Property);
+
+        if (binding is null)
+            return false;
+
+        Context.XamlSetters.Add(new Setter
         {
-            Context.XamlSetters.Add(new Setter 
-            {
-                Property = Context.Property,
-                Value = new MultiBinding()
-                {
-                    Bindings = bindings,
-                    Converter = converter,
-                    ConverterParameter = converterParameter,
-                    Mode = bindingMode,
-                    StringFormat = stringFormat,
-                    FallbackValue = fallbackValue,
-                    TargetNullValue = targetNullValue
-                }
+            Property = Context.Property,
+            Value = binding
+        });
 
-            });
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
+
     /// <summary>
-    /// Executes the <c>Bindings</c> operation.
+    /// Adds child bindings, in the order they are combined.
     /// </summary>
     /// <param name="bindings">The value used for <paramref name="bindings"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> Bindings(params BindingBase[] bindings)
     {
-        this.bindings ??= new List<BindingBase>();
         foreach (var binding in bindings)
-            this.bindings.Add(binding);
+            _entries.Add(new RawBindingEntry(binding));
+
         return this;
     }
 
     /// <summary>
-    /// Executes the <c>StringFormat</c> operation.
+    /// Formats the child values positionally (<c>{0}</c>, <c>{1}</c>, …), which combines them without a
+    /// converter.
     /// </summary>
     /// <param name="stringFormat">The value used for <paramref name="stringFormat"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> StringFormat(string stringFormat)
     {
-        this.stringFormat = stringFormat;
+        _multi.StringFormat = stringFormat;
         return this;
     }
 
     /// <summary>
-    /// Executes the <c>BindingMode</c> operation.
+    /// Mode of the multi binding.
     /// </summary>
     /// <param name="bindingMode">The value used for <paramref name="bindingMode"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> BindingMode(BindingMode bindingMode)
     {
-        this.bindingMode = bindingMode;
+        _multi.Mode = bindingMode;
         return this;
     }
 
     /// <summary>
-    /// Executes the <c>Converter</c> operation.
+    /// Combines the child values with a hand written converter.
     /// </summary>
     /// <param name="converter">The value used for <paramref name="converter"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> Converter(IMultiValueConverter converter)
     {
-        this.converter = converter;
+        _multi.SetUserConverter(converter);
         return this;
     }
 
     /// <summary>
-    /// Executes the <c>Parameter</c> operation.
+    /// <c>ConverterParameter</c> of the multi binding.
     /// </summary>
     /// <param name="converterParameter">The value used for <paramref name="converterParameter"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> Parameter(string converterParameter)
     {
-        this.converterParameter = converterParameter;
+        _multi.ConverterParameter = converterParameter;
         return this;
     }
 
     /// <summary>
-    /// Executes the <c>FallbackValue</c> operation.
+    /// <c>FallbackValue</c> of the multi binding.
     /// </summary>
     /// <param name="fallbackValue">The value used for <paramref name="fallbackValue"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> FallbackValue(object fallbackValue)
     {
-        this.fallbackValue = fallbackValue;
+        _multi.FallbackValue = fallbackValue;
         return this;
     }
 
     /// <summary>
-    /// Executes the <c>TargetNullValue</c> operation.
+    /// <c>TargetNullValue</c> of the multi binding.
     /// </summary>
     /// <param name="targetNullValue">The value used for <paramref name="targetNullValue"/>.</param>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public PropertySettersMultiBindingBuilder<T> TargetNullValue(object targetNullValue)
     {
-        this.targetNullValue = targetNullValue;
+        _multi.TargetNullValue = targetNullValue;
+        return this;
+    }
+
+    /// <summary>
+    /// Combines the sub binding values into the property value, in declaration order.
+    /// </summary>
+    /// <param name="convert">The value used for <paramref name="convert"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2>(Func<Q1, Q2, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3>(Func<Q1, Q2, Q3, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3, Q4>(Func<Q1, Q2, Q3, Q4, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3, Q4, Q5>(Func<Q1, Q2, Q3, Q4, Q5, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3, Q4, Q5, Q6>(Func<Q1, Q2, Q3, Q4, Q5, Q6, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3, Q4, Q5, Q6, Q7>(Func<Q1, Q2, Q3, Q4, Q5, Q6, Q7, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8>(Func<Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvert{Q1, Q2}(Func{Q1, Q2, T})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvert<Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9>(Func<Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, T> convert)
+    {
+        _multi.Use(convert);
+        return this;
+    }
+
+    /// <summary>
+    /// Reverse of <c>MultiConvert</c>. The returned tuple is written back in declaration order.
+    /// </summary>
+    /// <param name="convertBack">The value used for <paramref name="convertBack"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2>(Func<T, (Q1, Q2)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3>(Func<T, (Q1, Q2, Q3)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3, Q4>(Func<T, (Q1, Q2, Q3, Q4)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3, Q4, Q5>(Func<T, (Q1, Q2, Q3, Q4, Q5)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3, Q4, Q5, Q6>(Func<T, (Q1, Q2, Q3, Q4, Q5, Q6)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3, Q4, Q5, Q6, Q7>(Func<T, (Q1, Q2, Q3, Q4, Q5, Q6, Q7)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8>(Func<T, (Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <inheritdoc cref="MultiConvertBack{Q1, Q2}(Func{T, ValueTuple{Q1, Q2}})"/>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertBack<Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9>(Func<T, (Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9)> convertBack)
+    {
+        _multi.UseBack(convertBack);
+        return this;
+    }
+
+    /// <summary>
+    /// Combines an arbitrary number of sub bindings whose values share one type.
+    /// </summary>
+    /// <param name="convert">The value used for <paramref name="convert"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertRaw<Q>(Func<IReadOnlyList<Q>, T> convert)
+    {
+        _multi.UseRaw(convert);
+        return this;
+    }
+
+    /// <summary>
+    /// Combines an arbitrary number of sub bindings of mixed types, boxed and in declaration order.
+    /// </summary>
+    /// <param name="convert">The value used for <paramref name="convert"/>.</param>
+    /// <param name="convertBack">The value used for <paramref name="convertBack"/>.</param>
+    /// <returns>The current builder instance for fluent chaining.</returns>
+    public PropertySettersMultiBindingBuilder<T> MultiConvertRaw(Func<object?[], T> convert, Func<T, object?[]>? convertBack = null)
+    {
+        _multi.UseRaw(convert, convertBack);
         return this;
     }
 }

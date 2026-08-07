@@ -6,6 +6,10 @@ Sharp.UI
 
 Certain core property-building and styling components in FmgLib.MauiMarkup incorporate and extend code originally from Sharp.UI.
 
+The fluent multi-binding API of FmgLib.MauiMarkup (Path/Getter opening a sub binding, closed by a
+MultiConvert family) follows the method naming introduced by Sharp.UI so that both libraries read the
+same way; the implementation behind it is written independently for this repository.
+
 Copyright (c) 2022 Pawel Krzywdzinski
 
 All rights reserved.
