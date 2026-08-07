@@ -4,7 +4,7 @@ Converters transform a bound value on its way from source to target (and optiona
 
 ## Inline `Convert` — no converter class required
 
-The property builder's `Convert<Q>(Func<Q, T>)` takes the raw source value (`Q`) and returns the target property type (`T`):
+The property builder's `Convert<Q, R>(Func<Q, R>)` takes the raw source value (`Q`) and returns the value the binding hands on (`R`) — the target property type for a single binding, or the value passed to `MultiConvert` inside a [MultiBinding](multi-binding.md). Both types are inferred from the lambda, so you rarely spell them out:
 
 ```csharp
 public class CustomPage : ContentPage

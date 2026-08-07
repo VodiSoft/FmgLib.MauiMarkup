@@ -52,7 +52,7 @@ No registration call needed. XAML and FmgLib pages coexist, so you can migrate i
 - **Every control, every property, every event** — fluent methods for the whole MAUI surface, always in sync with the referenced MAUI version.
 - **Third-party controls too** — `[MauiMarkup(typeof(...))]` or `<MauiMarkupSourceGenerator>true</MauiMarkupSourceGenerator>` generates the same fluent API for Syncfusion, UraniumUI, SkiaSharp, ZXing, DevExpress, InputKit…
 - **Hot reload built in** — implement `IFmgLibHotReload`, call `InitializeHotReload()`, and your `Build()` re-runs on every code edit (leak-free, crash-isolated, works with `dotnet watch` and IDE hot reload).
-- **First-class bindings** — string paths or compiled `Getter` expressions, inline converters, multi-binding.
+- **First-class bindings** — string paths or compiled `Getter` expressions, inline converters, typed multi-bindings.
 - **Theming** — `OnLight/OnDark`, `OnPlatform`, `OnIdiom`, `DynamicResource` on any property; strongly-typed `Style<T>` with triggers and visual states.
 - **Localization** — JSON or RESX based, with instant runtime language switching.
 

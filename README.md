@@ -57,6 +57,8 @@ Optional parameters: `--netMajor 10|9` (default `10`), `--includeContent true|fa
 dotnet add package FmgLib.MauiMarkup
 ```
 
+The package targets **.NET 10 (MAUI 10)** and **.NET 9 (MAUI 9)**, so the same version works for both.
+
 No registration call needed — the fluent methods and the source generator come with the package. XAML and FmgLib pages coexist, so you can migrate incrementally.
 
 ## 📚 Documentation
@@ -85,7 +87,7 @@ The complete documentation lives in **[docs/](docs/README.md)** — every featur
 - **Every control, every property, every event** — fluent methods generated for the whole MAUI surface, always in sync with the referenced MAUI version.
 - **Third-party controls too** — annotate with `[MauiMarkup(typeof(...))]` or set `<MauiMarkupSourceGenerator>true</MauiMarkupSourceGenerator>` and the source generator produces the same fluent API for Syncfusion, UraniumUI, SkiaSharp, ZXing, DevExpress, InputKit…
 - **Hot reload built in** — implement `IFmgLibHotReload`, call `InitializeHotReload()`, and your `Build()` re-runs on every code edit (leak-free, crash-isolated, works with `dotnet watch` and IDE hot reload).
-- **First-class bindings** — string paths or compiled `Getter` expressions, inline converters, multi-binding, `FallbackValue`/`TargetNullValue`.
+- **First-class bindings** — string paths or compiled `Getter` expressions, inline converters, typed multi-bindings (`Path`/`Getter` several times + `MultiConvert`), `FallbackValue`/`TargetNullValue`.
 - **Theming** — `OnLight/OnDark`, `OnPlatform`, `OnIdiom`, `DynamicResource` on any property; strongly-typed `Style<T>` with triggers and visual states.
 - **Localization** — JSON or RESX based, with instant runtime language switching.
 

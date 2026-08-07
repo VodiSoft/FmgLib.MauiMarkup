@@ -20,12 +20,13 @@ new Label().Text(e => e.Path("UserName"));
 | `.StringFormat(string)` | `StringFormat=` | Sonuca uygulanan biçim dizesi. |
 | `.Converter(IValueConverter)` | `Converter=` | Klasik converter örneği. |
 | `.Parameter(object)` | `ConverterParameter=` | Converter'a iletilir. |
-| `.Convert<Q>(Func<Q,T>)` | — | Satır içi dönüştürme fonksiyonu (converter sınıfı gerekmez). |
-| `.ConvertBack<Q>(Func<T,Q>)` | — | Two-way binding'ler için ters dönüşüm. |
+| `.Convert<Q,R>(Func<Q,R>)` | — | Satır içi dönüştürme fonksiyonu (converter sınıfı gerekmez). |
+| `.ConvertBack<R,Q>(Func<R,Q>)` | — | Two-way binding'ler için ters dönüşüm. |
 | `.FallbackValue(object)` | `FallbackValue=` | Binding çözülemediğinde kullanılır. |
 | `.TargetNullValue(object)` | `TargetNullValue=` | Çözülen değer `null` olduğunda kullanılır. |
 | `.Getter(...)` / `.Setter(...)` | derlenmiş binding | Expression tabanlı — bkz. [Derlenmiş Binding'ler](compiled-bindings.md). |
-| `.Bindings(...)` | `MultiBinding` | Çoklu kaynak — bkz. [MultiBinding](multi-binding.md). |
+| Birden fazla `.Path(...)` | `MultiBinding` | `.MultiConvert(...)` ile birleştirilen çoklu kaynak — bkz. [MultiBinding](multi-binding.md). |
+| `.Bindings(...)` | `MultiBinding` | Hazır alt binding nesneleri — bkz. [MultiBinding](multi-binding.md). |
 
 ## `BindingContext`'e Bağlama (MVVM)
 

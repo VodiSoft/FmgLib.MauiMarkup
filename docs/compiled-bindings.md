@@ -85,6 +85,20 @@ new Label()
         .Convert((string name) => $"Name: {name}"))
 ```
 
+## Compiled multi-bindings
+
+`Getter` may be called more than once. Each call opens its own compiled sub-binding, they may produce different types, and a closing `MultiConvert` combines them — the whole multi-binding stays reflection-free:
+
+```csharp
+new Label()
+    .Text(e => e
+        .Getter(static (PersonViewModel vm) => vm.Name)
+        .Getter(static (PersonViewModel vm) => vm.Age)
+        .MultiConvert((string name, int age) => $"{name} ({age})"))
+```
+
+Compiled and string-path sub-bindings can be mixed in one multi-binding, and `Setter` still belongs to the `Getter` it follows. See [MultiBinding](multi-binding.md) for the full set of combining methods.
+
 ## `Binding.Create` (MAUI 9+)
 
 .NET MAUI 9 added `BindingBase.Create`, which builds a typed binding object directly from a `Func`. It pairs perfectly with FmgLib's `Bindings(...)` for compiled **multi-bindings**:

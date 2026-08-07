@@ -85,6 +85,20 @@ new Label()
         .Convert((string name) => $"Ad: {name}"))
 ```
 
+## Derlenmiş multi-binding'ler
+
+`Getter` birden fazla kez çağrılabilir. Her çağrı kendi derlenmiş alt binding'ini açar, farklı tipler üretebilirler ve zinciri kapatan `MultiConvert` bunları birleştirir — multi-binding'in tamamı reflection'sız kalır:
+
+```csharp
+new Label()
+    .Text(e => e
+        .Getter(static (PersonViewModel vm) => vm.Name)
+        .Getter(static (PersonViewModel vm) => vm.Age)
+        .MultiConvert((string name, int age) => $"{name} ({age})"))
+```
+
+Derlenmiş ve string path'li alt binding'ler tek bir multi-binding içinde karıştırılabilir; `Setter` de kendisinden önce gelen `Getter`'a aittir. Birleştirme metotlarının tamamı için bkz. [MultiBinding](multi-binding.md).
+
 ## `Binding.Create` (MAUI 9+)
 
 .NET MAUI 9, bir `Func`'tan doğrudan tipli binding nesnesi kuran `BindingBase.Create`'i ekledi. FmgLib'in `Bindings(...)` metoduyla derlenmiş **multi-binding** için mükemmel eşleşir:

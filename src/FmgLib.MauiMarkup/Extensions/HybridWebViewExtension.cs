@@ -1,3 +1,6 @@
+// HybridWebView exists in .NET MAUI 9, but its initialization events were only added in .NET MAUI 10.
+#if NET10_0_OR_GREATER
+
 namespace FmgLib.MauiMarkup;
 
 public static partial class HybridWebViewExtension
@@ -17,3 +20,5 @@ public static partial class HybridWebViewExtension
         return self;
     }
 }
+
+#endif

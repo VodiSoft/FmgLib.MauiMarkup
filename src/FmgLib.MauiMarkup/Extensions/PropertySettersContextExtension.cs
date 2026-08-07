@@ -8,8 +8,8 @@ namespace FmgLib.MauiMarkup;
 
 public static class PropertySettersContextExtension
 {
-    public static PropertySettersBindingBuilder<T> Getter<TContext, T>(this PropertySettersContext<T> self, Expression<Func<TContext, T>> getter)
-        => new PropertySettersBindingBuilder<T>(self).Getter<TContext>(getter);
+    public static PropertySettersBindingBuilder<T> Getter<TContext, T, TValue>(this PropertySettersContext<T> self, Expression<Func<TContext, TValue>> getter)
+        => new PropertySettersBindingBuilder<T>(self).Getter<TContext, TValue>(getter);
     
     public static PropertySettersBindingBuilder<T> Path<T>(this PropertySettersContext<T> self, string path)
         => new PropertySettersBindingBuilder<T>(self).Path(path);
