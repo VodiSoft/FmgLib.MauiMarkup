@@ -61,15 +61,34 @@ Use the `VisualStateGroups` attached-property method:
 new Entry()
     .Placeholder("E-mail")
     .VisualStateGroups(
-        new VisualStateGroup
+        new VisualStateGroupList
         {
             new VisualState<Entry>(VisualStates.VisualElement.Normal, e => e
                 .BackgroundColor(Colors.White)),
             new VisualState<Entry>(VisualStates.VisualElement.Focused, e => e
                 .BackgroundColor(Colors.LightYellow)),
-        }
-    )
+        })
 ```
+
+`VisualStateGroups` takes a **`VisualStateGroupList`**, and states written straight into it land in the
+`CommonStates` group. Add a `VisualStateGroup` explicitly when you need a group of your own:
+
+```csharp
+new Grid()
+    .VisualStateGroups(
+        new VisualStateGroupList
+        {
+            new VisualStateGroup()
+                .Name("SelectionStates")
+                .States(
+                    new VisualState<Grid>("Unselected", e => e.BackgroundColor(Colors.White)),
+                    new VisualState<Grid>("Selected", e => e.BackgroundColor(Colors.LightBlue)))
+        })
+```
+
+> `VisualStateGroup` itself does not support collection-initializer syntax — it holds its states in a
+> `States` property rather than implementing `IEnumerable`. Use `VisualStateGroupList` as above, or the
+> fluent `.States(...)` method.
 
 ## Animations Inside Visual States
 
@@ -112,7 +131,7 @@ new VisualState<Button>(VisualStates.Button.PointerOver)
 A `VisualState<T>` can also contain **state triggers** instead of being driven by control interaction. This enables responsive/adaptive layouts:
 
 ```csharp
-new VisualStateGroup
+new VisualStateGroupList
 {
     new VisualState<Grid>("Wide", e => e.BackgroundColor(Colors.White))
     {
@@ -138,7 +157,7 @@ Available fluent-enabled state triggers:
 Example — orientation-dependent layout:
 
 ```csharp
-new VisualStateGroup
+new VisualStateGroupList
 {
     new VisualState<StackLayout>("Portrait", e => e.Orientation(StackOrientation.Vertical))
     {

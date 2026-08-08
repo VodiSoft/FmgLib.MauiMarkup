@@ -70,7 +70,7 @@ new Label()
 | `OnDark(value)` | Tema Dark iken |
 | `Default(value)` | Yedek / belirtilmemiş tema |
 
-Kullanıcı işletim sistemi temasını değiştirdiğinde değer canlı olarak güncellenir — bu gerçek bir `AppThemeBinding`'dir, tek seferlik kontrol değildir.
+Tema her değiştiğinde değer canlı olarak güncellenir — kullanıcı işletim sistemi temasını değiştirdiğinde de, uygulama `Application.Current.UserAppTheme` atadığında da. Bu gerçek bir `AppThemeBinding`'dir, tek seferlik kontrol değildir (10.2.1 ve sonrası).
 
 ### Cihaz idiom değerleri (`{OnIdiom}`)
 
@@ -118,6 +118,10 @@ new Label()
         .OnLight(Colors.Black)
         .OnDark(l => l.DynamicResource("DarkAccent")))   // karanlık tema dinamik kaynak kullanıyor
 ```
+
+> İç içe builder bir tema binding'i içinde taşınamaz; bu yüzden bu biçim, sayfa kurulurken geçerli olan
+> temaya göre **bir kez** çözülür ve sonraki tema değişikliklerini takip etmez. Temanın çalışma anında
+> değişmesi gereken yerlerde düz değer biçimini — `.OnLight(x).OnDark(y)` — kullanın.
 
 ## Kalıplar 3–4 — Stillerin İçinde
 

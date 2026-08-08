@@ -153,11 +153,16 @@ new Style<Entry>
 
 Three complementary tools; use them together:
 
-1. **`OnLight`/`OnDark` in setters** — automatic OS theme response:
+1. **`OnLight`/`OnDark` in setters** — follows the theme by itself:
 
    ```csharp
    new Style<Label>(e => e.TextColor(e => e.OnLight(Colors.Black).OnDark(Colors.White)))
    ```
+
+   This produces an `AppThemeBinding`, so the value updates whenever the theme changes — the user flipping
+   the OS theme as well as the app assigning `Application.Current.UserAppTheme`. Controls already on screen
+   repaint themselves; there is no need to rebuild the page or to clear and refill the resource dictionary.
+   (Before 10.2.1 the value was resolved once at build time and did not follow later changes.)
 
 2. **Dynamic resources** — user-selectable themes at runtime:
 

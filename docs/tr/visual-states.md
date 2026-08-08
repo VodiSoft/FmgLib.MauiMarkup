@@ -61,15 +61,34 @@ new Style<Button>(e => e
 new Entry()
     .Placeholder("E-posta")
     .VisualStateGroups(
-        new VisualStateGroup
+        new VisualStateGroupList
         {
             new VisualState<Entry>(VisualStates.VisualElement.Normal, e => e
                 .BackgroundColor(Colors.White)),
             new VisualState<Entry>(VisualStates.VisualElement.Focused, e => e
                 .BackgroundColor(Colors.LightYellow)),
-        }
-    )
+        })
 ```
+
+`VisualStateGroups` bir **`VisualStateGroupList`** alır; doğrudan içine yazdığınız state'ler `CommonStates`
+grubuna girer. Kendi grubunuzu tanımlamanız gerekiyorsa `VisualStateGroup`'u açıkça ekleyin:
+
+```csharp
+new Grid()
+    .VisualStateGroups(
+        new VisualStateGroupList
+        {
+            new VisualStateGroup()
+                .Name("SelectionStates")
+                .States(
+                    new VisualState<Grid>("Unselected", e => e.BackgroundColor(Colors.White)),
+                    new VisualState<Grid>("Selected", e => e.BackgroundColor(Colors.LightBlue)))
+        })
+```
+
+> `VisualStateGroup`'un kendisi koleksiyon başlatıcı sözdizimini desteklemez: state'lerini `States`
+> property'sinde tutar, `IEnumerable` uygulamaz. Yukarıdaki gibi `VisualStateGroupList` kullanın ya da
+> fluent `.States(...)` metodunu tercih edin.
 
 ## Visual State İçinde Animasyonlar
 
@@ -112,7 +131,7 @@ new VisualState<Button>(VisualStates.Button.PointerOver)
 Bir `VisualState<T>`, kontrol etkileşimi yerine **state trigger'larla** da sürülebilir. Bu, duyarlı/adaptif yerleşimleri mümkün kılar:
 
 ```csharp
-new VisualStateGroup
+new VisualStateGroupList
 {
     new VisualState<Grid>("Wide", e => e.BackgroundColor(Colors.White))
     {
@@ -138,7 +157,7 @@ Fluent destekli state trigger'lar:
 Örnek — yönelime bağlı yerleşim:
 
 ```csharp
-new VisualStateGroup
+new VisualStateGroupList
 {
     new VisualState<StackLayout>("Portrait", e => e.Orientation(StackOrientation.Vertical))
     {

@@ -70,7 +70,7 @@ new Label()
 | `OnDark(value)` | App theme is Dark |
 | `Default(value)` | Fallback / unspecified theme |
 
-The value updates live when the user switches the OS theme — this is a real `AppThemeBinding`, not a one-time check.
+The value updates live whenever the theme changes — the user switching the OS theme, or the app assigning `Application.Current.UserAppTheme`. This is a real `AppThemeBinding`, not a one-time check (10.2.1 and later).
 
 ### Device idiom values (`{OnIdiom}`)
 
@@ -118,6 +118,10 @@ new Label()
         .OnLight(Colors.Black)
         .OnDark(l => l.DynamicResource("DarkAccent")))   // dark theme uses a dynamic resource
 ```
+
+> A nested builder cannot be carried by a theme binding, so this form is resolved **once** against the theme
+> in effect while the page is built and does not follow later theme changes. Keep the plain value form —
+> `.OnLight(x).OnDark(y)` — wherever the theme has to switch at runtime.
 
 ## Shapes 3–4 — Inside Styles
 

@@ -153,11 +153,17 @@ new Style<Entry>
 
 Üç tamamlayıcı araç; birlikte kullanın:
 
-1. **Setter'larda `OnLight`/`OnDark`** — otomatik işletim sistemi teması tepkisi:
+1. **Setter'larda `OnLight`/`OnDark`** — temayı kendisi takip eder:
 
    ```csharp
    new Style<Label>(e => e.TextColor(e => e.OnLight(Colors.Black).OnDark(Colors.White)))
    ```
+
+   Bu ifade bir `AppThemeBinding` üretir; dolayısıyla değer tema her değiştiğinde güncellenir — kullanıcı
+   işletim sistemi temasını değiştirdiğinde de, uygulama `Application.Current.UserAppTheme` atadığında da.
+   Ekranda hâlihazırda duran kontroller kendini yeniden boyar; sayfayı yeniden kurmanız ya da kaynak
+   sözlüğünü boşaltıp doldurmanız gerekmez. (10.2.1 öncesinde değer kurulum anında bir kez çözülüyor ve
+   sonraki değişiklikleri takip etmiyordu.)
 
 2. **Dinamik kaynaklar** — kullanıcı seçimli çalışma zamanı temaları:
 
