@@ -29,11 +29,11 @@ public sealed class AttachedFieldInfo
     public void Build()
     {
         FieldSymbol = MainSymbol.GetMembers(PropertyName).OfType<IFieldSymbol>().FirstOrDefault();
-        symbolTypeName = $"{MainSymbol.ToDisplayString()}";
+        symbolTypeName = $"{MainSymbol.ToQualifiedName()}";
         propertyName = BindablePropertyName.Split(new[] { "." }, StringSplitOptions.None)[^2] + PropertyName.Replace("Property", "");
         propertyTypeName = ReturnTypeName;
         camelCaseName = Helpers.ToCamelCase(propertyName);
         valueAssignmentString = $@"self.SetValue({BindablePropertyName}, {camelCaseName});";
-        dataTemplateAssignmentString = $@"self.SetValue({BindablePropertyName}, new DataTemplate(loadTemplate));";
+        dataTemplateAssignmentString = $@"self.SetValue({BindablePropertyName}, new global::Microsoft.Maui.Controls.DataTemplate(loadTemplate));";
     }
 }

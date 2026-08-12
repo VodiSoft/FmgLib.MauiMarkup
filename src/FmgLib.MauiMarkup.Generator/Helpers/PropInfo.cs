@@ -39,15 +39,15 @@ public class PropInfo
         }
 
         camelCaseName = Helpers.ToCamelCase(propertyName);
-        propertyTypeName = PropertySymbol.Type.ToDisplayString();
+        propertyTypeName = PropertySymbol.Type.ToQualifiedName();
 
         valueAssignmentString = IsBindableProperty ?
             $@"self.SetValue({BindablePropertyName}, {camelCaseName});" :
             $"{accessedWith}.{propertyName} = {camelCaseName};";
 
         dataTemplateAssignmentString = IsBindableProperty ?
-            $@"self.SetValue({BindablePropertyName}, new DataTemplate(loadTemplate));" :
-            $@"{accessedWith}.{propertyName} = new DataTemplate(loadTemplate);";
+            $@"self.SetValue({BindablePropertyName}, new global::Microsoft.Maui.Controls.DataTemplate(loadTemplate));" :
+            $@"{accessedWith}.{propertyName} = new global::Microsoft.Maui.Controls.DataTemplate(loadTemplate);";
 
         methodName = redefinedProperties == null || redefinedProperties.Count == 0 || !redefinedProperties.Any(e => e == propertyName) ? propertyName : propertyName + "New";
     }

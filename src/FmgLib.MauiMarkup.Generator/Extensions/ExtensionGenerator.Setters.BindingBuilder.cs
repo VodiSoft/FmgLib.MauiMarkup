@@ -13,9 +13,9 @@ public partial class ExtensionGenerator
     void GenerateExtensionMethod_SettersBuilder_Sealed(PropInfo info)
     {
         builder.Append($@"
-    public static SettersContext<{info.MainSymbolName}> {info.methodName}(this SettersContext<{info.MainSymbolName}> self, Func<PropertySettersContext<{info.propertyTypeName}>, IPropertySettersBuilder<{info.propertyTypeName}>> configure)
+    public static global::FmgLib.MauiMarkup.SettersContext<{info.MainSymbolName}> {info.methodName}(this global::FmgLib.MauiMarkup.SettersContext<{info.MainSymbolName}> self, global::System.Func<global::FmgLib.MauiMarkup.PropertySettersContext<{info.propertyTypeName}>, global::FmgLib.MauiMarkup.IPropertySettersBuilder<{info.propertyTypeName}>> configure)
     {{
-        var context = new PropertySettersContext<{info.propertyTypeName}>(self.XamlSetters, {info.BindablePropertyName});
+        var context = new global::FmgLib.MauiMarkup.PropertySettersContext<{info.propertyTypeName}>(self.XamlSetters, {info.BindablePropertyName});
         configure(context).Build();
         return self;
     }}
@@ -25,10 +25,10 @@ public partial class ExtensionGenerator
     void GenerateExtensionMethod_SettersBuilder_Normal(PropInfo info)
     {
         builder.Append($@"
-    public static SettersContext<T> {info.methodName}<T>(this SettersContext<T> self, Func<PropertySettersContext<{info.propertyTypeName}>, IPropertySettersBuilder<{info.propertyTypeName}>> configure)
+    public static global::FmgLib.MauiMarkup.SettersContext<T> {info.methodName}<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self, global::System.Func<global::FmgLib.MauiMarkup.PropertySettersContext<{info.propertyTypeName}>, global::FmgLib.MauiMarkup.IPropertySettersBuilder<{info.propertyTypeName}>> configure)
         where T : {info.MainSymbolName}
     {{
-        var context = new PropertySettersContext<{info.propertyTypeName}>(self.XamlSetters, {info.BindablePropertyName});
+        var context = new global::FmgLib.MauiMarkup.PropertySettersContext<{info.propertyTypeName}>(self.XamlSetters, {info.BindablePropertyName});
         configure(context).Build();
         return self;
     }}
@@ -47,9 +47,9 @@ public partial class ExtensionGenerator
     void GenerateExtensionMethod_SettersBuilder_Sealed(AttachedFieldInfo info)
     {
         builder.Append($@"
-    public static SettersContext<{info.DeclaringTypeName}> {info.propertyName}(this SettersContext<{info.DeclaringTypeName}> self, Func<PropertySettersContext<{info.ReturnTypeName}>, IPropertySettersBuilder<{info.ReturnTypeName}>> configure)
+    public static global::FmgLib.MauiMarkup.SettersContext<{info.DeclaringTypeName}> {info.propertyName}(this global::FmgLib.MauiMarkup.SettersContext<{info.DeclaringTypeName}> self, global::System.Func<global::FmgLib.MauiMarkup.PropertySettersContext<{info.ReturnTypeName}>, global::FmgLib.MauiMarkup.IPropertySettersBuilder<{info.ReturnTypeName}>> configure)
     {{
-        var context = new PropertySettersContext<{info.ReturnTypeName}>(self.XamlSetters, {info.BindablePropertyName});
+        var context = new global::FmgLib.MauiMarkup.PropertySettersContext<{info.ReturnTypeName}>(self.XamlSetters, {info.BindablePropertyName});
         configure(context).Build();
         return self;
     }}
@@ -59,10 +59,10 @@ public partial class ExtensionGenerator
     void GenerateExtensionMethod_SettersBuilder_Normal(AttachedFieldInfo info)
     {
         builder.Append($@"
-    public static SettersContext<T> {info.propertyName}<T>(this SettersContext<T> self, Func<PropertySettersContext<{info.ReturnTypeName}>, IPropertySettersBuilder<{info.ReturnTypeName}>> configure)
+    public static global::FmgLib.MauiMarkup.SettersContext<T> {info.propertyName}<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self, global::System.Func<global::FmgLib.MauiMarkup.PropertySettersContext<{info.ReturnTypeName}>, global::FmgLib.MauiMarkup.IPropertySettersBuilder<{info.ReturnTypeName}>> configure)
         where T : {info.DeclaringTypeName}
     {{
-        var context = new PropertySettersContext<{info.ReturnTypeName}>(self.XamlSetters, {info.BindablePropertyName});
+        var context = new global::FmgLib.MauiMarkup.PropertySettersContext<{info.ReturnTypeName}>(self.XamlSetters, {info.BindablePropertyName});
         configure(context).Build();
         return self;
     }}

@@ -31,6 +31,32 @@ public static class Helpers
     };
 
     /// <summary>
+    /// The display format every type name in generated code is printed with.
+    ///
+    /// Generated files are compiled inside the CONSUMER's project, whose <c>using</c> directives the
+    /// generator has no control over: <c>ImplicitUsings</c> may be disabled, and a project is free
+    /// to declare its own <c>Controls</c> or <c>Graphics</c> namespace that shadows the intended
+    /// one. Emitting every type as a <c>global::</c>-rooted name makes the output independent of
+    /// both — the code resolves identically whatever the surrounding file imports.
+    ///
+    /// This is <see cref="SymbolDisplayFormat.FullyQualifiedFormat"/> plus the nullable reference
+    /// modifier, which that format omits: without it a <c>string?</c> property would generate a
+    /// non-nullable <c>string</c> parameter and warn at every call site that passes null.
+    /// </summary>
+    public static readonly SymbolDisplayFormat QualifiedTypeFormat = SymbolDisplayFormat.FullyQualifiedFormat
+        .WithMiscellaneousOptions(
+            SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
+            SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+            SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+
+    /// <summary>
+    /// Prints a symbol the way generated code must reference it — see <see cref="QualifiedTypeFormat"/>.
+    /// </summary>
+    /// <param name="symbol">The symbol to print.</param>
+    /// <returns>A <c>global::</c>-rooted, using-independent type name.</returns>
+    public static string ToQualifiedName(this ISymbol symbol) => symbol.ToDisplayString(QualifiedTypeFormat);
+
+    /// <summary>
     /// Executes the <c>ToCamelCase</c> operation.
     /// </summary>
     /// <param name="text">The value used for <paramref name="text"/>.</param>
@@ -232,6 +258,72 @@ public static class Helpers
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Evaluates whether the symbol is marked <c>[Obsolete(message, error: true)]</c>.
+    ///
+    /// A plain obsolete member only warns (and generated files suppress CS0612/CS0618), but an
+    /// error-level one makes every mention of it CS0619 — an error no <c>#pragma</c> can turn off.
+    /// Anything generated around such a symbol would break the consuming build, so it is skipped.
+    /// </summary>
+    /// <param name="symbol">The symbol to check.</param>
+    /// <returns><see langword="true"/> when using the symbol is a compile error.</returns>
+    public static bool IsObsoleteAsError(ISymbol symbol)
+    {
+        foreach (var attribute in symbol.GetAttributes())
+        {
+            if (attribute.AttributeClass?.Name is not ("ObsoleteAttribute" or "Obsolete"))
+            {
+                continue;
+            }
+
+            if (attribute.ConstructorArguments.Length >= 2 &&
+                attribute.ConstructorArguments[1].Value is bool isError &&
+                isError)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Evaluates whether a type — or any of its constituent types — is obsolete-as-error, so that
+    /// it can never appear in a generated signature.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns><see langword="true"/> when the type cannot be referenced without a compile error.</returns>
+    public static bool IsUnusableType(ITypeSymbol type)
+    {
+        switch (type)
+        {
+            case IArrayTypeSymbol array:
+                return IsUnusableType(array.ElementType);
+
+            case INamedTypeSymbol named:
+                for (var current = named; current != null; current = current.ContainingType)
+                {
+                    if (IsObsoleteAsError(current))
+                    {
+                        return true;
+                    }
+                }
+
+                foreach (var typeArgument in named.TypeArguments)
+                {
+                    if (IsUnusableType(typeArgument))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+
+            default:
+                return false;
+        }
     }
 
     /// <summary>

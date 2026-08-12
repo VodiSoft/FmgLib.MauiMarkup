@@ -23,6 +23,11 @@ builder
 
 // or with an explicit startup language:
 // .UseMauiMarkupLocalizationWithResx(AppResources.ResourceManager, "en-US");
+
+// or with the options overload, for fallback culture / missing-key policy / culture sync:
+// .UseMauiMarkupLocalizationWithResx(AppResources.ResourceManager, o => o
+//     .UseDefaultCulture("en-US")
+//     .OnMissingTranslation(MissingTranslationBehavior.Marker));
 ```
 
 ## 3. Bind Texts with `TranslateResx`
@@ -56,7 +61,7 @@ this.Title(e => e.TranslateResx(nameof(AppResources.SettingsTitle)))
 TranslatorResx.Instance.ChangeCulture(CultureInfo.GetCultureInfo("en-US"));
 ```
 
-All `TranslateResx`-bound properties update immediately.
+All `TranslateResx`-bound properties update immediately, and the call is safe from a background thread. As with the JSON variant, a culture change also updates the ambient `CultureInfo` by default — see [`CultureSyncMode`](localization-json.md#4-switch-languages-at-runtime).
 
 Language selector example:
 
@@ -97,10 +102,17 @@ string helloTr = "Hello".ToTranslateResx("tr-TR");     // explicit culture
 
 ## Notes & Tips
 
-- **Culture fallback** follows standard `ResourceManager` rules: `tr-TR` → `tr` → default resources. Keep the neutral `.resx` complete.
+- **Culture fallback** follows standard `ResourceManager` rules: `tr-TR` → `tr` → default resources. Keep the neutral `.resx` complete. Setting `UseFallbackCulture(...)` adds one more attempt after that chain.
+- **Missing keys** return the key by default (previously `ResourceManager.GetString` returned `null`, which rendered an empty label). Change it with `OnMissingTranslation(...)` — the same policy as the JSON translator.
 - **Persist the selection** with `Preferences` and re-apply it at startup (see the pattern in [Localization (JSON)](localization-json.md#persisting-the-choice)).
 - JSON and RESX systems are independent (`Translator` vs. `TranslatorResx`); you *can* use both in one app, but standardizing on one keeps things simple.
-- Formatted strings: store the pattern in resources (`"WelcomeUser" = "Welcome, {0}!"`) and combine with a [converter](binding-converters.md) or `string.Format` in code.
+- **Formatted strings:** store the pattern in resources (`"WelcomeUser" = "Welcome, {0}!"`) and bind it with `TranslateResxFormat`, which stays live for both the language and the values:
+
+```csharp
+new Label().Text(e => e.TranslateResxFormat(nameof(AppResources.WelcomeUser), nameof(vm.UserName)))
+```
+
+- **Right to left:** `this.FlowDirection(e => e.FromCulture(TranslatorResx.Instance))` mirrors the page for Arabic/Hebrew.
 
 ## Related Topics
 

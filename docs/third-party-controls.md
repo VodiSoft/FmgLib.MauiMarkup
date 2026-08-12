@@ -174,6 +174,27 @@ new SfAvatarView()
 
 If a method you expect seems "missing" on the leaf type, it is almost always served by a base-class extension under the **same name** — IntelliSense will still offer it; only truly type-changing redefinitions carry the `New` suffix.
 
+## Members That Are Deliberately Skipped
+
+A control's public surface is not always reachable from *your* assembly, and generating a fluent
+wrapper for a member that cannot be used would break your build instead of the library's. The
+generator therefore skips a member when any of the following holds — the control still generates,
+just without that one method:
+
+| Member shape | Why it is skipped |
+| --- | --- |
+| Setter is `protected`, `internal`, `protected internal` or `private protected` (e.g. DrawnUi's `SkiaControl.IsMeasuring`) | `self.Prop = value` is not accessible outside the declaring assembly (CS0272). If the control also declares a matching `BindableProperty`, the fluent method IS generated and routes through `SetValue`. |
+| `init`-only setter | Assignable only inside an object initializer (CS8852). |
+| Read-only collection with no callable `Add` — `Queue<T>` (`Enqueue`), `LinkedList<T>` (explicit `ICollection<T>.Add`), `ReadOnlyCollection<T>` | The generated body is a `foreach (…) Prop.Add(item);` loop that would not compile (CS1929). |
+| `static` property or event | An instance-fluent call would silently write to the type, and several shapes cannot compile at all (CS0176). Set it with a plain assignment instead. |
+| Member type (or a generic argument of it) is not `public` | A `public` extension method cannot expose it (CS0053). |
+| Member — or its type — is `[Obsolete(…, error: true)]` | Any mention is a hard error (CS0619). |
+| `ref`-returning property, `ref struct` type (e.g. `Span<T>`) | Cannot be captured by the generated overloads. |
+
+If one of these is exactly the member you need, reach for a hand-written
+[custom extension method](custom-extension-methods.md) — you can access it however the control
+actually allows.
+
 ## Practical Notes
 
 - Generation happens **in the project where the attribute (or MSBuild property) lives** — typically your app project, or a shared UI project referenced by the app.

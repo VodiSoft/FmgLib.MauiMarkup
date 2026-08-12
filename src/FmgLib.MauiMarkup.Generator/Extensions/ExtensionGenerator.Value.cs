@@ -21,7 +21,7 @@ public partial class ExtensionGenerator
     }}
 
     public static {info.MainSymbolName} {info.methodName}(this {info.MainSymbolName} self,
-        Func<{info.propertyTypeName}> configure)
+        global::System.Func<{info.propertyTypeName}> configure)
     {{
         var {info.camelCaseName} = configure();
         {(info.IsBindableProperty ?
@@ -44,7 +44,7 @@ public partial class ExtensionGenerator
     }}
 
     public static T {info.methodName}<T>(this T self,
-        Func<{info.propertyTypeName}> configure)
+        global::System.Func<{info.propertyTypeName}> configure)
         where T : {info.MainSymbolName}
     {{
         var {info.camelCaseName} = configure();
@@ -76,7 +76,7 @@ public partial class ExtensionGenerator
     }}
 
     public static {info.DeclaringTypeName} {info.propertyName}(this {info.DeclaringTypeName} self,
-        Func<{info.ReturnTypeName}> configure)
+        global::System.Func<{info.ReturnTypeName}> configure)
     {{
         var {info.camelCaseName} = configure();
         {$@"self.SetValue({info.BindablePropertyName}, {info.camelCaseName});"}
@@ -97,7 +97,7 @@ public partial class ExtensionGenerator
     }}
 
     public static T {info.propertyName}<T>(this T self,
-        Func<{info.ReturnTypeName}> configure)
+        global::System.Func<{info.ReturnTypeName}> configure)
         where T : {info.DeclaringTypeName}
     {{
         var {info.camelCaseName} = configure();

@@ -21,7 +21,10 @@ public partial class GettingStartedPage : ContentPage, IFmgLibHotReload
         var secondary = "#8B5CF6".ToColor();
 
         this
-        .Title("Getting Started")
+        // Bound rather than assigned, so the navigation bar agrees with the tab title after a
+        // language switch. The body of this page stays in English on purpose — the Settings page is
+        // where localization is demonstrated.
+        .Title(e => e.Translate("Nav_GettingStarted"))
         .Content(
             new ScrollView()
             .Content(
@@ -120,6 +123,11 @@ public partial class GettingStartedPage : ContentPage, IFmgLibHotReload
                         .GestureRecognizers(
                             new TapGestureRecognizer()
                             .OnTapped(async (s,e) => await AppShell.Current.GoToAsync(nameof(Samples.Pages.AnimationsPage)))
+                        ),
+                        NavigationCard("🌍", "Settings", "Live language (EN/TR/AR + RTL) and theme switching", "#0EA5E9".ToColor())
+                        .GestureRecognizers(
+                            new TapGestureRecognizer()
+                            .OnTapped(async (s,e) => await AppShell.Current.GoToAsync(nameof(Samples.Pages.SettingsPage)))
                         )
                     ),
 

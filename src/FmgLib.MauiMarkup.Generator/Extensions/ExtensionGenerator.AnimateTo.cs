@@ -7,10 +7,10 @@ public partial class ExtensionGenerator
 
         if (mainSymbol.IsSealed)
             builder.Append($@"
-    public static Task<bool> Animate{info.methodName}To(this {info.MainSymbolName} self, {info.propertyTypeName} value, uint length = 250, Easing? easing = null)");
+    public static global::System.Threading.Tasks.Task<bool> Animate{info.methodName}To(this {info.MainSymbolName} self, {info.propertyTypeName} value, uint length = 250, global::Microsoft.Maui.Easing? easing = null)");
         else
             builder.Append($@"
-    public static Task<bool> Animate{info.methodName}To<T>(this T self, {info.propertyTypeName} value, uint length = 250, Easing? easing = null)
+    public static global::System.Threading.Tasks.Task<bool> Animate{info.methodName}To<T>(this T self, {info.propertyTypeName} value, uint length = 250, global::Microsoft.Maui.Easing? easing = null)
         where T : {info.MainSymbolName}");
 
         // info.accessedWith is "self" for instance properties and the declaring type's name for
@@ -20,9 +20,9 @@ public partial class ExtensionGenerator
         builder.Append($@"
     {{
         {info.propertyTypeName} fromValue = {info.accessedWith}.{info.propertyName};
-        var transform = (double t) => Transformations.{transformationName}(fromValue, value, t);
+        var transform = (double t) => global::FmgLib.MauiMarkup.Transformations.{transformationName}(fromValue, value, t);
         var callback = ({info.propertyTypeName} actValue) => {{ {callBackSetValue} }};
-        return Transformations.AnimateAsync<{info.propertyTypeName}>(self, ""Animate{info.methodName}To"", transform, callback, length, easing);
+        return global::FmgLib.MauiMarkup.Transformations.AnimateAsync<{info.propertyTypeName}>(self, ""Animate{info.methodName}To"", transform, callback, length, easing);
     }}
     ");
     }

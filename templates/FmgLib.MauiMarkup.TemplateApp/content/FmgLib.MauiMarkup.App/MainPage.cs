@@ -71,7 +71,11 @@ public partial class MainPage : ContentPage, IFmgLibHotReload
     }
 
     private int _count = 0;
-    private Label CounterLabel;
+
+    // Populated by .Assign(out CounterLabel) in Build(), which runs from InitializeHotReload() —
+    // the compiler cannot see that through the out parameter, so the field is marked null-forgiving
+    // instead of leaving every new project with a CS8618 warning on first build.
+    private Label CounterLabel = null!;
 
 
     private void OnCounterClicked(object? sender, EventArgs e)

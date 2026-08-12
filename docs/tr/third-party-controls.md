@@ -163,6 +163,26 @@ Açıkken generator, referans edilen üçüncü parti assembly'leri tarar ve uyg
 
 Generator dayanıklıdır: bir egzotik tip işlenemezse (eksik geçişli bağımlılık, sürüm uyumsuzluğu) **yalnız o tip atlanır** ve bir uyarı (FMMG002) hangi tipin neden atlandığını isimle söyler; diğer her genişletme yine üretilir. Bir source generator'daki tek exception tüm çıktıyı sileceğinden bu izolasyon önemlidir — projede kafa karıştırıcı CS1955/CS0311 hataları görürseniz **Warnings** panelinde FMMG002/CS8785 arayın.
 
+## Bilerek Atlanan Üyeler
+
+Bir kontrolün public yüzeyinin tamamı *sizin* assembly'nizden erişilebilir olmayabilir; kullanılamayacak
+bir üye için fluent metot üretmek, kütüphaneyi değil sizin derlemenizi bozar. Bu yüzden generator
+aşağıdaki durumlarda o üyeyi atlar — kontrol yine üretilir, sadece o tek metot çıkmaz:
+
+| Üye şekli | Neden atlanır |
+| --- | --- |
+| Setter'ı `protected`, `internal`, `protected internal` veya `private protected` (örn. DrawnUi'daki `SkiaControl.IsMeasuring`) | `self.Prop = value` bildirildiği assembly dışından erişilemez (CS0272). Kontrol eşleşen bir `BindableProperty` de bildiriyorsa metot ÜRETİLİR ve `SetValue` üzerinden çalışır. |
+| Yalnızca `init` setter'ı | Sadece nesne başlatıcısı içinde atanabilir (CS8852). |
+| Çağrılabilir `Add`'i olmayan salt-okunur koleksiyon — `Queue<T>` (`Enqueue`), `LinkedList<T>` (explicit `ICollection<T>.Add`), `ReadOnlyCollection<T>` | Üretilen gövde `foreach (…) Prop.Add(item);` döngüsüdür ve derlenmez (CS1929). |
+| `static` özellik veya event | Instance fluent çağrı sessizce tipe yazar; bazı şekiller hiç derlenmez (CS0176). Bunu düz atama ile ayarlayın. |
+| Üye tipi (veya generic argümanı) `public` değil | `public` bir genişletme metodu onu açığa çıkaramaz (CS0053). |
+| Üye — veya tipi — `[Obsolete(…, error: true)]` | Her kullanımı sert hatadır (CS0619). |
+| `ref` döndüren özellik, `ref struct` tip (örn. `Span<T>`) | Üretilen overload'lar tarafından yakalanamaz. |
+
+İhtiyacınız tam da bu üyelerden biriyse elle yazılmış bir
+[özel genişletme metodu](custom-extension-methods.md) kullanın — kontrolün gerçekten izin verdiği
+şekilde erişebilirsiniz.
+
 ## Notlar
 
 - Üretim, attribute'ün (veya MSBuild özelliğinin) **bulunduğu projede** olur — genelde uygulama projeniz veya onun referans ettiği paylaşılan bir UI projesi.

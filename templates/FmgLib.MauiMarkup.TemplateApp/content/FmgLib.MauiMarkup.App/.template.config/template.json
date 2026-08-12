@@ -67,7 +67,8 @@
         {
           "condition": "(!includeContent)",
           "exclude": [
-            "Samples/**"
+            "Samples/**",
+            "Resources/Raw/Localization.json"
           ]
         }
       ]

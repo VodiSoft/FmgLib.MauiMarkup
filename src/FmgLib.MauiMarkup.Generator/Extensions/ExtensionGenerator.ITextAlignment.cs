@@ -8,247 +8,247 @@ public partial class ExtensionGenerator
     {
         builder.Append($@"
 
-    public static T AlignText<T>(this T self, TextAlignment vertical, TextAlignment horizontal)
-        where T : {symbol.ToDisplayString()}
+    public static T AlignText<T>(this T self, global::Microsoft.Maui.TextAlignment vertical, global::Microsoft.Maui.TextAlignment horizontal)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, vertical);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, horizontal);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, vertical);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, horizontal);
         return self;
     }}
 
-    public static SettersContext<T> AlignText<T>(this SettersContext<T> self, TextAlignment vertical, TextAlignment horizontal)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> AlignText<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self, global::Microsoft.Maui.TextAlignment vertical, global::Microsoft.Maui.TextAlignment horizontal)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = vertical }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = horizontal }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = vertical }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = horizontal }});
         return self;
     }}
 
     public static T TextCenterHorizontal<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
         return self;
     }}
 
-    public static SettersContext<T> TextCenterHorizontal<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextCenterHorizontal<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
         return self;
     }}
 
     public static T TextCenterVertical<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
         return self;
     }}
 
-    public static SettersContext<T> TextCenterVertical<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextCenterVertical<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
         return self;
     }}
 
     public static T TextCenter<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Center);
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
         return self;
     }}
 
-    public static SettersContext<T> TextCenter<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextCenter<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Center }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
         return self;
     }}
 
     public static T TextTop<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
         return self;
     }}
 
-    public static SettersContext<T> TextTop<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextTop<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
         return self;
     }}
 
     public static T TextBottom<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
         return self;
     }}
 
-    public static SettersContext<T> TextBottom<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextBottom<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
         return self;
     }}
 
     public static T TextTopLeft<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Start);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
         return self;
     }}
 
-    public static SettersContext<T> TextTopLeft<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextTopLeft<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Start }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
         return self;
     }}
 
     public static T TextBottomLeft<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.End);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
         return self;
     }}
 
-    public static SettersContext<T> TextBottomLeft<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextBottomLeft<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.End }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
         return self;
     }}
 
     public static T TextTopCenter<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Start);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
         return self;
     }}
 
-    public static SettersContext<T> TextTopCenter<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextTopCenter<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Start }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
         return self;
     }}
 
     public static T TextBottomCenter<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.End);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
         return self;
     }}
 
-    public static SettersContext<T> TextBottomCenter<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextBottomCenter<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.End }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
         return self;
     }}
 
     public static T TextCenterRight<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Center);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
         return self;
     }}
 
-    public static SettersContext<T> TextCenterRight<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextCenterRight<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Center }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
         return self;
     }}
 
     public static T TextCenterLeft<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Center);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Center);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
         return self;
     }}
 
-    public static SettersContext<T> TextCenterLeft<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextCenterLeft<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Center }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Center }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
         return self;
     }}
 
     public static T TextTopRight<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.Start);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
         return self;
     }}
 
-    public static SettersContext<T> TextTopRight<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextTopRight<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.Start }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
         return self;
     }}
 
     public static T TextBottomRight<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.VerticalTextAlignmentProperty, TextAlignment.End);
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
         return self;
     }}
 
-    public static SettersContext<T> TextBottomRight<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextBottomRight<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.VerticalTextAlignmentProperty, Value = TextAlignment.End }});
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.VerticalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
         return self;
     }}
 
     public static T TextLeft<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.Start);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.Start);
         return self;
     }}
 
-    public static SettersContext<T> TextLeft<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextLeft<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.Start }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.Start }});
         return self;
     }}
 
     public static T TextRight<T>(this T self)
-        where T : {symbol.ToDisplayString()}
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.SetValue({symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, TextAlignment.End);
+        self.SetValue({symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, global::Microsoft.Maui.TextAlignment.End);
         return self;
     }}
 
-    public static SettersContext<T> TextRight<T>(this SettersContext<T> self)
-        where T : {symbol.ToDisplayString()}
+    public static global::FmgLib.MauiMarkup.SettersContext<T> TextRight<T>(this global::FmgLib.MauiMarkup.SettersContext<T> self)
+        where T : {symbol.ToQualifiedName()}
     {{
-        self.XamlSetters.Add(new Setter {{ Property = {symbol.ToDisplayString()}.HorizontalTextAlignmentProperty, Value = TextAlignment.End }});
+        self.XamlSetters.Add(new global::Microsoft.Maui.Controls.Setter {{ Property = {symbol.ToQualifiedName()}.HorizontalTextAlignmentProperty, Value = global::Microsoft.Maui.TextAlignment.End }});
         return self;
     }}
 

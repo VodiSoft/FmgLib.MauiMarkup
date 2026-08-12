@@ -13,7 +13,7 @@ public partial class ExtensionGenerator
     void GenerateExtensionMethod_DataTemplate_Sealed(PropInfo info)
     {
         builder.Append($@"
-    public static {info.MainSymbolName} {info.methodName}<T>(this {info.MainSymbolName} self, System.Func<object> loadTemplate)
+    public static {info.MainSymbolName} {info.methodName}<T>(this {info.MainSymbolName} self, global::System.Func<object> loadTemplate)
     {{
         {info.dataTemplateAssignmentString}
         return self;
@@ -24,7 +24,7 @@ public partial class ExtensionGenerator
     void GenerateExtensionMethod_DataTemplate_Normal(PropInfo info)
     {
         builder.Append($@"
-    public static T {info.methodName}<T>(this T self, System.Func<object> loadTemplate)
+    public static T {info.methodName}<T>(this T self, global::System.Func<object> loadTemplate)
         where T : {info.MainSymbolName}
     {{
         {info.dataTemplateAssignmentString}

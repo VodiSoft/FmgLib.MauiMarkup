@@ -15,7 +15,7 @@ public partial class ExtensionGenerator
         var tail = info.propertyTypeName.EndsWith("?") ? "?" : "";
         builder.Append($@"
     public static {info.MainSymbolName} {info.methodName}(this {info.MainSymbolName} self,
-        IList<{elementTypeName}> {info.camelCaseName})
+        global::System.Collections.Generic.IList<{elementTypeName}> {info.camelCaseName})
     {{
         foreach (var item in {info.camelCaseName})
             {info.accessedWith}.{info.propertyName}{tail}.Add(item);
@@ -37,7 +37,7 @@ public partial class ExtensionGenerator
         var tail = info.propertyTypeName.EndsWith("?") ? "?" : "";
         builder.Append($@"
     public static T {info.propertyName}<T>(this T self,
-        IList<{elementTypeName}> {info.camelCaseName})
+        global::System.Collections.Generic.IList<{elementTypeName}> {info.camelCaseName})
         where T : {info.MainSymbolName}
     {{
         foreach (var item in {info.camelCaseName})

@@ -1,0 +1,118 @@
+{
+  "Nav_GettingStarted": {
+    "en-US": "Getting Started",
+    "tr-TR": "Başlangıç",
+    "ar-SA": "البداية"
+  },
+  "Nav_Settings": {
+    "en-US": "Settings",
+    "tr-TR": "Ayarlar",
+    "ar-SA": "الإعدادات"
+  },
+
+  "Settings_Title": {
+    "en-US": "Settings",
+    "tr-TR": "Ayarlar",
+    "ar-SA": "الإعدادات"
+  },
+  "Settings_Subtitle": {
+    "en-US": "Language and theme change instantly — no page is reloaded.",
+    "tr-TR": "Dil ve tema anında değişir — hiçbir sayfa yeniden yüklenmez.",
+    "ar-SA": "تتغير اللغة والمظهر فوراً — دون إعادة تحميل أي صفحة."
+  },
+
+  "Settings_Language": {
+    "en-US": "Language",
+    "tr-TR": "Dil",
+    "ar-SA": "اللغة"
+  },
+  "Language_English": {
+    "en-US": "English",
+    "tr-TR": "İngilizce",
+    "ar-SA": "الإنجليزية"
+  },
+  "Language_Turkish": {
+    "en-US": "Turkish",
+    "tr-TR": "Türkçe",
+    "ar-SA": "التركية"
+  },
+  "Language_Arabic": {
+    "en-US": "Arabic",
+    "tr-TR": "Arapça",
+    "ar-SA": "العربية"
+  },
+
+  "Settings_Theme": {
+    "en-US": "Theme",
+    "tr-TR": "Tema",
+    "ar-SA": "المظهر"
+  },
+  "Theme_System": {
+    "en-US": "System",
+    "tr-TR": "Sistem",
+    "ar-SA": "النظام"
+  },
+  "Theme_Light": {
+    "en-US": "Light",
+    "tr-TR": "Açık",
+    "ar-SA": "فاتح"
+  },
+  "Theme_Dark": {
+    "en-US": "Dark",
+    "tr-TR": "Koyu",
+    "ar-SA": "داكن"
+  },
+
+  "Settings_Live": {
+    "en-US": "Live values",
+    "tr-TR": "Canlı değerler",
+    "ar-SA": "قيم حية"
+  },
+  "Settings_CurrentLanguage": {
+    "en-US": "Selected language: {0}",
+    "tr-TR": "Seçili dil: {0}",
+    "ar-SA": "اللغة المختارة: {0}"
+  },
+  "Settings_Direction": {
+    "en-US": "Layout direction: {0}",
+    "tr-TR": "Yerleşim yönü: {0}",
+    "ar-SA": "اتجاه التخطيط: {0}"
+  },
+  "Settings_Today": {
+    "en-US": "Today: {0:D}",
+    "tr-TR": "Bugün: {0:D}",
+    "ar-SA": "اليوم: {0:D}"
+  },
+  "Settings_Amount": {
+    "en-US": "Amount: {0:C}",
+    "tr-TR": "Tutar: {0:C}",
+    "ar-SA": "المبلغ: {0:C}"
+  },
+  "Settings_FormatHint": {
+    "en-US": "Dates and currency follow the selected language too, because CultureSyncMode.Full also sets the ambient culture.",
+    "tr-TR": "Tarih ve para birimi de seçili dili takip eder; çünkü CultureSyncMode.Full ortam kültürünü de ayarlar.",
+    "ar-SA": "التواريخ والعملة تتبع اللغة المختارة أيضاً، لأن CultureSyncMode.Full يضبط ثقافة البيئة كذلك."
+  },
+
+  "Settings_Rtl": {
+    "en-US": "Right to left",
+    "tr-TR": "Sağdan sola",
+    "ar-SA": "من اليمين إلى اليسار"
+  },
+  "Settings_RtlHint": {
+    "en-US": "Pick Arabic: the page mirrors itself because FlowDirection is bound to the culture.",
+    "tr-TR": "Arapça'yı seçin: FlowDirection kültüre bağlı olduğu için sayfa kendini aynalar.",
+    "ar-SA": "اختر العربية: تنعكس الصفحة لأن FlowDirection مرتبط بالثقافة."
+  },
+
+  "Direction_LeftToRight": {
+    "en-US": "Left to right",
+    "tr-TR": "Soldan sağa",
+    "ar-SA": "من اليسار إلى اليمين"
+  },
+  "Direction_RightToLeft": {
+    "en-US": "Right to left",
+    "tr-TR": "Sağdan sola",
+    "ar-SA": "من اليمين إلى اليسار"
+  }
+}

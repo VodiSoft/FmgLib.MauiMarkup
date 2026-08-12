@@ -112,12 +112,19 @@ public class AppStyles
         },              
 
         // "Frame"
-
+        //
+        // Frame is [Obsolete] as of .NET 9 (use Border) but still ships and still works, so the
+        // default style stays — a freshly created project that happens to use a Frame should look
+        // right out of the box. The suppression is scoped to this one style so the template does
+        // not hand every new project a build warning it did not ask for; delete the pragma pair
+        // together with the style once MAUI actually removes the type.
+#pragma warning disable CS0618 // Type or member is obsolete
         new Style<Frame>(e => e
             .HasShadow(false)
             .BorderColor(e => e.OnLight(AppColors.Gray200).OnDark(AppColors.Gray950))
             .CornerRadius(8)),
-        
+#pragma warning restore CS0618
+
         // "ImageButton"
 
         new Style<ImageButton>(e => e
@@ -148,10 +155,14 @@ public class AppStyles
         },
 
         // "ListView"
-
+        //
+        // Deprecated in favour of CollectionView, but still shipping and still functional — kept
+        // and suppressed for the same reason as the Frame style above.
+#pragma warning disable CS0618 // Type or member is obsolete
         new Style<ListView>(e => e
             .SeparatorColor(e => e.OnLight(AppColors.Gray200).OnDark(AppColors.Gray500))
             .RefreshControlColor(e => e.OnLight(AppColors.Gray900).OnDark(AppColors.Gray200))),
+#pragma warning restore CS0618
 
         // "Picker"
 

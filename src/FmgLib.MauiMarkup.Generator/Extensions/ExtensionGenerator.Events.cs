@@ -48,7 +48,7 @@ public partial class ExtensionGenerator
     void GenerateEventMethodHandler_Sealed(IEventSymbol eventSymbol)
     {
         builder.Append($@"
-    public static {mainSymbol.ToDisplayString()} On{eventSymbol.Name}(this {mainSymbol.ToDisplayString()} self, {((INamedTypeSymbol)eventSymbol.Type).ToDisplayString()} handler)
+    public static {mainSymbol.ToQualifiedName()} On{eventSymbol.Name}(this {mainSymbol.ToQualifiedName()} self, {eventSymbol.Type.ToQualifiedName()} handler)
     {{
         self.{eventSymbol.Name} += handler;
         return self;
@@ -59,8 +59,8 @@ public partial class ExtensionGenerator
     void GenerateEventMethodHandler_Normal(IEventSymbol eventSymbol)
     {
         builder.Append($@"
-    public static T On{eventSymbol.Name}<T>(this T self, {((INamedTypeSymbol)eventSymbol.Type).ToDisplayString()} handler)
-        where T : {mainSymbol.ToDisplayString()}
+    public static T On{eventSymbol.Name}<T>(this T self, {eventSymbol.Type.ToQualifiedName()} handler)
+        where T : {mainSymbol.ToQualifiedName()}
     {{
         self.{eventSymbol.Name} += handler;
         return self;
@@ -74,7 +74,7 @@ public partial class ExtensionGenerator
         var parameterCount = invokeMethod?.Parameters.Length ?? 0;
         if (parameterCount <= 2)
             builder.Append($@"
-    public static {mainSymbol.ToDisplayString()} On{eventSymbol.Name}(this {mainSymbol.ToDisplayString()} self, System.Action<{mainSymbol.ToDisplayString()}> action)
+    public static {mainSymbol.ToQualifiedName()} On{eventSymbol.Name}(this {mainSymbol.ToQualifiedName()} self, global::System.Action<{mainSymbol.ToQualifiedName()}> action)
     {{
         {(parameterCount == 2 ? $"self.{eventSymbol.Name} += (o, arg) => action(self);" : parameterCount == 1 ? $"self.{eventSymbol.Name} += (o) => action(self);" : parameterCount == 0 ? $"self.{eventSymbol.Name} += () => action(self);" : string.Empty)}
         return self;
@@ -88,8 +88,8 @@ public partial class ExtensionGenerator
         var parameterCount = invokeMethod?.Parameters.Length ?? 0;
         if (parameterCount <= 2)
             builder.Append($@"
-    public static T On{eventSymbol.Name}<T>(this T self, System.Action<T> action)
-        where T : {mainSymbol.ToDisplayString()}
+    public static T On{eventSymbol.Name}<T>(this T self, global::System.Action<T> action)
+        where T : {mainSymbol.ToQualifiedName()}
     {{
         {(parameterCount == 2 ? $"self.{eventSymbol.Name} += (o, arg) => action(self);" : parameterCount == 1 ? $"self.{eventSymbol.Name} += (o) => action(self);" : parameterCount == 0 ? $"self.{eventSymbol.Name} += () => action(self);" : string.Empty)}
         return self;

@@ -69,7 +69,7 @@ public partial class ExtensionGenerator
         var tail = info.propertyTypeName.EndsWith("?") ? "?" : "";
         builder.Append($@"
     public static {info.MainSymbolName} {(string.IsNullOrEmpty(fluentMethodName) ? info.methodName : fluentMethodName)}(this {info.MainSymbolName} self,
-        IList<{elementTypeName}> {info.camelCaseName})
+        global::System.Collections.Generic.IList<{elementTypeName}> {info.camelCaseName})
     {{
         foreach (var item in {info.camelCaseName})
             {info.accessedWith}.{info.propertyName}{tail}.Add(item);
@@ -85,7 +85,7 @@ public partial class ExtensionGenerator
     }}
 
     public static {info.MainSymbolName} {(string.IsNullOrEmpty(fluentMethodName) ? info.methodName : fluentMethodName)}(this {info.MainSymbolName} self,
-        Func<{elementTypeName}[]> configure)
+        global::System.Func<{elementTypeName}[]> configure)
     {{
         var {info.camelCaseName} = configure();
         foreach (var item in {info.camelCaseName})
@@ -100,7 +100,7 @@ public partial class ExtensionGenerator
         var tail = info.propertyTypeName.EndsWith("?") ? "?" : "";
         builder.Append($@"
     public static T {(string.IsNullOrEmpty(fluentMethodName) ? info.methodName : fluentMethodName)}<T>(this T self,
-        IList<{elementTypeName}> {info.camelCaseName})
+        global::System.Collections.Generic.IList<{elementTypeName}> {info.camelCaseName})
         where T : {info.MainSymbolName}
     {{
         foreach (var item in {info.camelCaseName})
@@ -118,7 +118,7 @@ public partial class ExtensionGenerator
     }}
 
     public static T {(string.IsNullOrEmpty(fluentMethodName) ? info.methodName : fluentMethodName)}<T>(this T self,
-        Func<{elementTypeName}[]> configure)
+        global::System.Func<{elementTypeName}[]> configure)
         where T : {info.MainSymbolName}
     {{
         var {info.camelCaseName} = configure();
