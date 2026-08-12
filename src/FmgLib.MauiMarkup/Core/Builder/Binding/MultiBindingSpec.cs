@@ -7,10 +7,30 @@ namespace FmgLib.MauiMarkup;
 /// <summary>
 /// Multi value converter produced by the fluent <c>MultiConvert</c> family.
 /// <para>
-/// A <see cref="MultiBinding"/> evaluates its converter as soon as the first sub binding resolves, so the
-/// remaining slots are still empty at that point. Returning <see cref="Binding.DoNothing"/> keeps the target
-/// property at its current value until every source has something to contribute; returning
-/// <see langword="null"/> instead would push a null through and clear the property.
+/// MAUI applies a binding immediately inside <c>SetBinding</c>, so the converter runs once while the target
+/// still has no binding context and every sub binding is empty. Returning <see cref="Binding.DoNothing"/>
+/// then keeps the target property at its current value; returning <see langword="null"/> instead would push
+/// a null through and clear the property.
+/// </para>
+/// <para>
+/// <b>That hold only applies where an empty slot is distinguishable from a real value.</b>
+/// <see cref="BindingValues.IsMissing"/> holds for <see cref="BindableProperty.UnsetValue"/> always, and for
+/// <see langword="null"/> when the delegate parameter is a non nullable value type — handing such a
+/// parameter a <c>default(int)</c> it never asked for would be worse than waiting. For a REFERENCE TYPE
+/// parameter <see langword="null"/> is a legitimate source value, so it is passed straight to the delegate
+/// and the delegate has to be null safe:
+/// </para>
+/// <code>
+/// // throws during page construction, before the sources resolve:
+/// .MultiConvert((string first, string last) =&gt; $"{last.ToUpperInvariant()}, {first}")
+///
+/// // safe:
+/// .MultiConvert((string first, string last) =&gt; $"{last?.ToUpperInvariant()}, {first}")
+/// </code>
+/// <para>
+/// The same rule applies to the single binding <c>Convert</c> family. Both halves of this contract are
+/// pinned by tests (<c>ConverterReceivesNullForUnresolvedReferenceTypedSubBindings</c> and
+/// <c>ConverterIsNotCalledForUnresolvedValueTypedSubBindings</c>).
 /// </para>
 /// </summary>
 internal sealed class FluentMultiValueConverter<T> : IMultiValueConverter

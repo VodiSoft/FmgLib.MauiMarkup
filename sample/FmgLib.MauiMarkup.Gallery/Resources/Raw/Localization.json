@@ -1,0 +1,67 @@
+{
+  "Greeting": {
+    "en-US": "Good to see you",
+    "tr-TR": "Seni görmek güzel",
+    "ar-SA": "سعيد برؤيتك"
+  },
+  "Tagline": {
+    "en-US": "Every bound string on this page re-reads itself. Nothing is reloaded.",
+    "tr-TR": "Bu sayfadaki her bağlı metin kendini yeniden okur. Hiçbir şey yeniden yüklenmez.",
+    "ar-SA": "كل نص مرتبط في هذه الصفحة يعيد قراءة نفسه. لا شيء يُعاد تحميله."
+  },
+  "Language": {
+    "en-US": "Language",
+    "tr-TR": "Dil",
+    "ar-SA": "اللغة"
+  },
+  "Language_English": {
+    "en-US": "English",
+    "tr-TR": "İngilizce",
+    "ar-SA": "الإنجليزية"
+  },
+  "Language_Turkish": {
+    "en-US": "Turkish",
+    "tr-TR": "Türkçe",
+    "ar-SA": "التركية"
+  },
+  "Language_Arabic": {
+    "en-US": "Arabic",
+    "tr-TR": "Arapça",
+    "ar-SA": "العربية"
+  },
+  "WelcomeUser": {
+    "en-US": "Welcome, {0}!",
+    "tr-TR": "Hoş geldin, {0}!",
+    "ar-SA": "أهلاً، {0}!"
+  },
+  "CartSummary": {
+    "en-US": "{0} items — {1:C}",
+    "tr-TR": "{0} ürün — {1:C}",
+    "ar-SA": "{0} عناصر — {1:C}"
+  },
+  "Today": {
+    "en-US": "Today is {0:D}",
+    "tr-TR": "Bugün {0:D}",
+    "ar-SA": "اليوم {0:D}"
+  },
+  "Direction": {
+    "en-US": "Layout direction: {0}",
+    "tr-TR": "Yerleşim yönü: {0}",
+    "ar-SA": "اتجاه التخطيط: {0}"
+  },
+  "Direction_LeftToRight": {
+    "en-US": "left to right",
+    "tr-TR": "soldan sağa",
+    "ar-SA": "من اليسار إلى اليمين"
+  },
+  "Direction_RightToLeft": {
+    "en-US": "right to left",
+    "tr-TR": "sağdan sola",
+    "ar-SA": "من اليمين إلى اليسار"
+  },
+  "MissingKeyDemo": {
+    "en-US": "This key exists in English only.",
+    "tr-TR": "Bu anahtar yalnızca İngilizcede var.",
+    "ar-SA": "هذا المفتاح موجود بالإنجليزية فقط."
+  }
+}

@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>FmgLib.MauiMarkup.Gallery</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<ApplicationTitle>MauiMarkup Gallery</ApplicationTitle>
+		<ApplicationId>com.fmglib.mauimarkup.gallery</ApplicationId>
+		<ApplicationIdGuid>b6f2d0c4-6f4a-4d4e-9a2f-2f1b6c9e4a10</ApplicationIdGuid>
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#5B4BE8" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#5B4BE8" BaseSize="128,128" />
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+		<MauiFont Include="Resources\Fonts\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.90" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.90" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\FmgLib.MauiMarkup.Generator\FmgLib.MauiMarkup.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\..\src\FmgLib.MauiMarkup\FmgLib.MauiMarkup.csproj" />
+	</ItemGroup>
+
+</Project>

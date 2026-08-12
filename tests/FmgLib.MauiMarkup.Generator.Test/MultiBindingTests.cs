@@ -392,4 +392,67 @@ public class MultiBindingTests
 
         target.Text.Should().Be("Lovelace, Ada");
     }
+
+    /// <summary>
+    /// Pins the contract a fluent converter delegate is called under before its sources resolve.
+    ///
+    /// MAUI applies a binding immediately in SetBinding, so the converter runs once while the target
+    /// still has no BindingContext. For a NON-NULLABLE VALUE TYPE parameter the library holds the
+    /// property at its current value (BindingValues.IsMissing → Binding.DoNothing), because handing a
+    /// delegate a default(int) it never asked for would be worse than waiting. For a REFERENCE TYPE
+    /// parameter there is no such distinction available — null is a legitimate source value — so the
+    /// delegate is invoked with null.
+    ///
+    /// The practical consequence, and the reason this test exists: a MultiConvert delegate that
+    /// dereferences a reference-typed parameter must be null-safe, or it throws during page
+    /// construction. Changing this would mean suppressing legitimately null values, so the behaviour
+    /// is deliberate and pinned here rather than left to drift.
+    /// </summary>
+    [Test]
+    public void ConverterReceivesNullForUnresolvedReferenceTypedSubBindings()
+    {
+        var target = new Target();   // deliberately no BindingContext
+        var invocations = new List<(string? First, string? Last)>();
+
+        TextOf(target)
+            .Path(nameof(Person.FirstName))
+            .Path(nameof(Person.LastName))
+            .MultiConvert((string first, string last) =>
+            {
+                invocations.Add((first, last));
+                return $"{first}|{last}";
+            })
+            .Build();
+
+        invocations.Should().ContainSingle("the binding is applied once while the target is still unbound");
+        invocations[0].Should().Be((null, null), "nothing has resolved yet");
+
+        target.BindingContext = new Person();
+
+        target.Text.Should().Be("Ada|Lovelace");
+    }
+
+    /// <summary>
+    /// The value-type half of the contract above: an unresolved sub binding whose delegate parameter
+    /// is a non-nullable value type holds the target instead of pushing a default through.
+    /// </summary>
+    [Test]
+    public void ConverterIsNotCalledForUnresolvedValueTypedSubBindings()
+    {
+        var target = new Target { Text = "untouched" };
+        var invoked = false;
+
+        TextOf(target)
+            .Path(nameof(Person.Age))
+            .Path(nameof(Person.IsActive))
+            .MultiConvert((int age, bool active) =>
+            {
+                invoked = true;
+                return $"{age}|{active}";
+            })
+            .Build();
+
+        invoked.Should().BeFalse("a non-nullable value type has nothing sensible to receive yet");
+        target.Text.Should().Be("untouched", "the property is held at its current value");
+    }
 }
