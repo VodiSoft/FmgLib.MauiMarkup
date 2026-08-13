@@ -85,6 +85,7 @@ Bu dokümantasyon, kütüphane için eksiksiz ve kendi kendine yeten bir rehberd
 | [Yardımcı Metotlar](utilities.md) | `ToColor`, koleksiyon yardımcıları, `AddRangeMarkup`, stil interop |
 | [Tam Örnekler](complete-examples.md) | Eksiksiz sayfalar: giriş ekranı, ürün listesi, ayarlar sayfası, MVVM kalıpları |
 | [İpuçları ve Sorun Giderme](tips-and-troubleshooting.md) | Sık yapılan hatalar, adlandırma kuralları, SSS |
+| [CommunityToolkit.Maui.Markup ile Karşılaştırma](comparison.md) | MAUI için iki C# markup kütüphanesinin dürüst, özellik özellik karşılaştırması |
 
 ## Önerilen Öğrenme Yolu
 

@@ -16,7 +16,7 @@
 		<Authors>VodiSoft</Authors>
 		<Company>VodiSoft</Company>
 		<Copyright>©2024-2026 VodiSoft</Copyright>
-		<PackageProjectUrl>https://vodisoft.com/en/docs/fmglibmauimarkup/</PackageProjectUrl>
+		<PackageProjectUrl>https://fmglibmauimarkup.vodisoft.com/</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/VodiSoft/FmgLib.MauiMarkup</RepositoryUrl>
 		<UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
 		<Description>C# Code Markup Library for .NET MAUI: UI Development, Multi Lang (Localization) with Fluent Methods and Hot Reload</Description>
