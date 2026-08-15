@@ -18,7 +18,7 @@ format), so they work with Claude Code, the Claude apps, the Agent SDK, and any 
 
 Tell your agent:
 
-> Fetch https://mauimarkup.fmglib.dev/llms.txt and install the FmgLib.MauiMarkup AI skills.
+> Fetch https://fmglibmauimarkup.vodisoft.com/llms.txt and install the FmgLib.MauiMarkup AI skills.
 
 It will discover the catalog and download each skill into place.
 
@@ -102,4 +102,4 @@ commit. If a skill teaches something that no longer matches the library, please
 [open an issue](https://github.com/VodiSoft/FmgLib.MauiMarkup/issues) — an agent repeating stale
 guidance is worse than one with no skill at all.
 
-Full documentation: <https://mauimarkup.fmglib.dev> · Licensed MIT, like the library.
+Full documentation: <https://fmglibmauimarkup.vodisoft.com> · Licensed MIT, like the library.

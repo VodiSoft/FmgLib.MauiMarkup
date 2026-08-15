@@ -271,4 +271,4 @@ Read these when the task needs the detail — they are part of this skill:
 `mauimarkup-styling` · `mauimarkup-localization` · `mauimarkup-thirdparty` · `mauimarkup-hotreload` ·
 `mauimarkup-review`
 
-Docs: https://mauimarkup.fmglib.dev · Source: https://github.com/VodiSoft/FmgLib.MauiMarkup
+Docs: https://fmglibmauimarkup.vodisoft.com · Source: https://github.com/VodiSoft/FmgLib.MauiMarkup

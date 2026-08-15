@@ -88,7 +88,7 @@ The complete documentation lives in **[docs/](docs/README.md)** — every featur
 Ten installable skill bundles teach AI coding agents (Claude Code, the Claude apps, the Agent SDK, or anything that reads a `SKILL.md`) how to write correct FmgLib.MauiMarkup — the naming rules they can derive instead of guess, the `Build()` lifecycle, the binding builder, the source generator, and the mistakes that fail silently.
 
 ```
-Fetch https://mauimarkup.fmglib.dev/llms.txt and install the FmgLib.MauiMarkup AI skills.
+Fetch https://fmglibmauimarkup.vodisoft.com/llms.txt and install the FmgLib.MauiMarkup AI skills.
 ```
 
 Or copy any folder from [`skills/`](skills/) into `~/.claude/skills/` (personal) or `<repo>/.claude/skills/` (shared with your team). Full catalog and manual install: **[AI Skills](docs/ai-skills.md)**.
