@@ -37,7 +37,7 @@ its skill update ship in the same commit.
 
 Tell your agent:
 
-> Fetch [https://mauimarkup.fmglib.dev/llms.txt](https://fmglibmauimarkup.vodisoft.com/llms.txt) and install the FmgLib.MauiMarkup AI skills.
+> Fetch https://fmglibmauimarkup.vodisoft.com/llms.txt and install the FmgLib.MauiMarkup AI skills.
 
 It will find this page, read the catalog below and download each skill into place.
 
