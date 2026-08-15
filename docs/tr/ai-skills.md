@@ -37,7 +37,7 @@ skill güncellemesi aynı commit'te gider.
 
 Ajanınıza şunu söyleyin:
 
-> https://mauimarkup.fmglib.dev/llms.txt adresini getir ve FmgLib.MauiMarkup AI skill'lerini kur.
+> [https://mauimarkup.fmglib.dev/llms.txt](https://fmglibmauimarkup.vodisoft.com/llms.txt) adresini getir ve FmgLib.MauiMarkup AI skill'lerini kur.
 
 Bu sayfayı bulacak, aşağıdaki katalogdan okuyacak ve her skill'i yerine indirecektir.
 
