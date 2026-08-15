@@ -79,8 +79,19 @@ The complete documentation lives in **[docs/](docs/README.md)** — every featur
 | JSON / RESX localization with live language switching | [Localization](docs/localization-json.md) |
 | **Third-party controls** (`[MauiMarkup]`, auto-generation, Syncfusion/UraniumUI/…) | [Third-Party Controls](docs/third-party-controls.md) |
 | Full example pages & common pitfalls | [Complete Examples](docs/complete-examples.md) · [Tips & Troubleshooting](docs/tips-and-troubleshooting.md) |
+| **AI Skills** — teach your coding agent this library | [AI Skills](docs/ai-skills.md) · [`skills/`](skills/) |
 
 > 🇹🇷 Dokümantasyonun Türkçe sürümü: **[docs/tr/](docs/tr/README.md)**
+
+## 🤖 AI Skills
+
+Ten installable skill bundles teach AI coding agents (Claude Code, the Claude apps, the Agent SDK, or anything that reads a `SKILL.md`) how to write correct FmgLib.MauiMarkup — the naming rules they can derive instead of guess, the `Build()` lifecycle, the binding builder, the source generator, and the mistakes that fail silently.
+
+```
+Fetch https://mauimarkup.fmglib.dev/llms.txt and install the FmgLib.MauiMarkup AI skills.
+```
+
+Or copy any folder from [`skills/`](skills/) into `~/.claude/skills/` (personal) or `<repo>/.claude/skills/` (shared with your team). Full catalog and manual install: **[AI Skills](docs/ai-skills.md)**.
 
 ## Key Features
 

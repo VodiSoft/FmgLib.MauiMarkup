@@ -83,6 +83,7 @@ This documentation is a complete, self-contained guide to the library. Every top
 | [Utilities](utilities.md) | `ToColor`, collection helpers, `AddRangeMarkup`, style interop |
 | [Complete Examples](complete-examples.md) | Full pages: login screen, product list, settings page, MVVM patterns |
 | [Tips & Troubleshooting](tips-and-troubleshooting.md) | Common pitfalls, naming rules, FAQ |
+| [AI Skills](ai-skills.md) | Ten installable skill bundles that teach AI coding agents to write correct FmgLib.MauiMarkup |
 | [vs. CommunityToolkit.Maui.Markup](comparison.md) | Honest feature-by-feature comparison of the two C# markup libraries for MAUI |
 
 > 🇹🇷 Bu dokümantasyonun Türkçe sürümü [tr/](tr/README.md) klasöründedir.
